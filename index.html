@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>С 8 Марта! 🌸</title>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; user-select:none; -webkit-tap-highlight-color:transparent; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+  body{
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(180deg,#bfe9ff 0%,#ffe6f3 50%,#fff7d6 100%);
+  }
+
+  .deck{ position:relative; width:min(420px, 92vw); height:min(580px, 86vh); }
+
+ .card{
+    position:absolute; left:50%; top:50%; width:100%;
+    transform: translate(-50%,-50%);
+    background: #ffffff; /* Полностью белый фон — больше ничего не просвечивает! */
+    border-radius:18px; padding:14px;
+    border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 22px 55px rgba(0,0,0,0.16);
+    display:flex; flex-direction:column; gap:12px;
+    touch-action:none; will-change: transform, opacity;
+  }
+
+  .photo{
+    height:360px; border-radius:14px;
+    background:
+      radial-gradient(circle at 25% 20%, rgba(255, 90, 160, 0.22), rgba(255,255,255,0)),
+      radial-gradient(circle at 75% 22%, rgba(255, 184, 77, 0.22), rgba(255,255,255,0)),
+      linear-gradient(180deg, rgba(191,233,255,0.55), rgba(255,230,243,0.65));
+    border:1px solid rgba(0,0,0,0.05);
+    display:flex; align-items:center; justify-content:center; font-size:64px;
+  }
+
+  .text{
+    min-height:54px; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-weight:900; font-size:17px; line-height:1.35;
+    color:#2b1b2a; padding:0 8px;
+  }
+
+  .caption{ text-align:center; font-size:13px; font-weight:800; color: rgba(43,27,42,0.55); padding-bottom:2px; }
+
+  /* ВОЗВРАЩАЕМ СТАРЫЙ ВИД НИЖНИХ КАРТОЧЕК (Без скрытия текста) */
+  .card.back1{ transform: translate(-50%,-50%) translate(10px, 10px) rotate(2deg) scale(0.985); opacity:0.78; filter: blur(0.2px); }
+  .card.back2{ transform: translate(-50%,-50%) translate(-10px, 16px) rotate(-2deg) scale(0.97); opacity:0.55; filter: blur(0.25px); }
+
+  .title{
+    position:fixed; top:40px; left:50%; transform:translateX(-50%);
+    font-size: clamp(20px, 5vw, 30px); font-weight:900; color:#2b1b2a;
+    text-align:center; background:rgba(255,255,255,0.85);
+    padding:10px 22px; border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08); white-space: nowrap; z-index: 100;
+  }
+
+  .flower{ position:fixed; top:-20px; font-size:18px; pointer-events:none; animation:fall linear forwards; z-index: 1; }
+  @keyframes fall{ to{ transform:translateY(110vh) rotate(360deg); opacity:0; } }
+
+  .card.special {
+    background: linear-gradient(135deg, #fffcf0 0%, #ffffff 100%);
+    border: 2px solid #ffcc00;
+    box-shadow: 0 15px 45px rgba(255, 204, 0, 0.35), 0 0 15px rgba(255, 204, 0, 0.4);
+  }
+  
+  .card.special .photo {
+    background:
+      radial-gradient(circle at 30% 25%, rgba(255, 204, 0, 0.4), rgba(255,255,255,0)),
+      radial-gradient(circle at 70% 30%, rgba(255, 90, 160, 0.3), rgba(255,255,255,0)),
+      linear-gradient(180deg, #fffae6, #ffe6f3);
+    border: 1px solid rgba(255, 204, 0, 0.3);
+  }
+  
+  .card.special .text { font-size:18px; color: #d62828; }
+  .card.special .caption { color: #d62828; font-weight:900; }
+
+  .super-badge {
+    position: absolute; top: -12px; right: -12px;
+    background: linear-gradient(135deg, #ff5e62, #ff9966); color: white;
+    padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 14px;
+    box-shadow: 0 4px 12px rgba(255, 94, 98, 0.5); transform: rotate(5deg);
+    animation: pulseBadge 1.5s infinite; z-index: 10;
+  }
+  @keyframes pulseBadge { 0%, 100% { transform: rotate(5deg) scale(1); } 50% { transform: rotate(5deg) scale(1.1); } }
+
+  .bottom-bar {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 15px; z-index: 1000; align-items: center;
+  }
+
+  .score-board {
+    background: rgba(255, 255, 255, 0.95); padding: 10px 24px;
+    border-radius: 30px; font-size: 18px; font-weight: 800; color: #2b1b2a;
+    box-shadow: 0 8px 25px rgba(255, 90, 160, 0.25);
+    display: flex; align-items: center; gap: 8px; transition: transform 0.15s;
+  }
+  .score-board.pop {  }
+
+  .wallet-btn {
+    background: linear-gradient(135deg, #ff8da1, #ff3385);
+    width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: white; border: none; box-shadow: 0 8px 20px rgba(255, 51, 133, 0.4); cursor: pointer;
+    transition: transform 0.2s; position: relative;
+  }
+  .wallet-btn:active { transform: scale(0.9); }
+  .wallet-badge {
+    position: absolute; top: -5px; right: -5px; background: white; color: #ff3385;
+    font-size: 11px; font-weight: 900; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  .restart-btn {
+    position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.85); border: 2px solid #ff8da1; color: #ff3385;
+    padding: 10px 24px; border-radius: 25px; font-weight: 800; font-size: 15px;
+    cursor: pointer; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(255, 51, 133, 0.2);
+  }
+  .restart-btn.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) scale(1); }
+  .restart-btn:active { transform: translateX(-50%) scale(0.95); }
+
+  .overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(30, 15, 25, 0.85); 
+    z-index: 99999; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease; will-change: opacity;
+  }
+  .overlay.active { opacity: 1; pointer-events: auto; }
+
+  .prize-card {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+    width: min(380px, 90vw); padding: 30px 20px; border-radius: 20px;
+    text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 2px solid #ffb84d; 
+    transform: scale(0.85); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    display: flex; flex-direction: column; gap: 15px; will-change: transform, opacity;
+  }
+  .overlay.active .prize-card { transform: scale(1); opacity: 1; }
+
+  .prize-icon { font-size: 60px; line-height: 1; animation: float 3s ease-in-out infinite; }
+  .prize-title { font-size: 24px; font-weight: 900; color: #ff3385; text-transform: uppercase; }
+  .prize-desc { font-size: 16px; font-weight: 600; color: #5a4b59; line-height: 1.4; min-height: 44px;}
+  .prize-note { font-size: 13px; font-weight: 700; color: #ff8da1; }
+  
+  .btn {
+    margin-top: 10px; border: none; padding: 14px 24px; font-size: 17px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: transform 0.2s;
+  }
+  .btn:active { transform: scale(0.95); }
+  .btn-primary { background: linear-gradient(90deg, #ff3385, #ff8da1); color: white; box-shadow: 0 8px 20px rgba(255, 51, 133, 0.4); }
+  .btn-secondary { background: #f0e6f2; color: #5a4b59; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  .wallet-modal {
+    background: #fff; width: min(400px, 95vw); max-height: 85vh; border-radius: 24px; padding: 20px;
+    display: flex; flex-direction: column; gap: 15px; transform: scale(0.9); opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s; will-change: transform, opacity;
+  }
+  .overlay.active .wallet-modal { transform: scale(1); opacity: 1; }
+  
+  .wallet-header { display: flex; justify-content: space-between; align-items: center; }
+  .wallet-title { font-size: 22px; font-weight: 900; color: #2b1b2a; }
+  .close-btn { background: none; border: none; font-size: 32px; line-height: 1; font-weight: bold; color: #ccc; cursor: pointer; padding: 0 5px; }
+  
+  .coupons-list {
+    display: flex; flex-direction: column; gap: 10px; overflow-y: auto;
+    padding-right: 5px; margin-bottom: 5px; -webkit-overflow-scrolling: touch; 
+  }
+  .coupons-list::-webkit-scrollbar { width: 6px; }
+  .coupons-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+  .coupons-list::-webkit-scrollbar-thumb { background: #ff8da1; border-radius: 10px; }
+
+  .coupon-item { background: #fdf2f8; border: 2px dashed #ffb8d2; padding: 12px 15px; border-radius: 14px; display: flex; gap: 15px; align-items: center; }
+  .coupon-item.locked { background: #f5f5f5; border: 2px dashed #e0e0e0; filter: grayscale(1); opacity: 0.7; }
+  .c-icon { font-size: 28px; }
+  .c-info { display: flex; flex-direction: column; text-align: left; }
+  .c-name { font-weight: 800; font-size: 15px; color: #2b1b2a; }
+  .coupon-item.locked .c-name { color: #888; }
+  .c-desc { font-size: 12px; font-weight: 600; color: #777; margin-top: 2px; line-height: 1.2;}
+
+</style>
+</head>
+<body>
+
+<div class="title">С 8 Марта, моя любимая 🌸</div>
+
+<div class="deck" id="deck"></div>
+
+<!-- Новая кнопка Начать заново -->
+<button class="restart-btn" id="restartBtn" onclick="hardReset()">Начать заново</button>
+
+<div class="bottom-bar">
+  <div class="score-board" id="scoreBoard">
+    <span>💖 Уровень вессенего настроения:</span> <span id="scoreText">0 / 25</span>
+  </div>
+  <button class="wallet-btn" onclick="openWallet()">
+    💌
+    <div class="wallet-badge" id="walletBadge">0/10</div>
+  </button>
+</div>
+
+<!-- Окно: Выпадение купона -->
+<div class="overlay" id="prizeOverlay">
+  <div class="prize-card" id="prizeCard">
+    <div class="prize-icon" id="pIcon">💌</div>
+    <div class="prize-title" id="pTitle">Купон</div>
+    <div class="prize-desc" id="pDesc">Описание</div>
+    <div class="prize-note" id="pNote"></div>
+    <button class="btn btn-primary" id="pBtn" onclick="claimPrize()">Забрать!</button>
+  </div>
+</div>
+
+<!-- Окно: Кошелек -->
+<div class="overlay" id="walletOverlay">
+  <div class="wallet-modal">
+    <div class="wallet-header">
+      <div class="wallet-title">Твои купоны 💖</div>
+      <button class="close-btn" onclick="closeWallet()">×</button>
+    </div>
+    <div class="coupons-list" id="couponsList">
+      <!-- Генерируется через JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+  const ALL_COUPONS = [
+    { id: 1, icon: "📞", title: "Купон №1", desc: "Долгий звонок<br> говорим сколько захочешь" },
+    { id: 2, icon: "🎬", title: "Купон №2", desc: "Совместный просмотр фильма онлайн<br> (ты выбираешь)" },
+    { id: 3, icon: "🎮", title: "Купон №3", desc: "Вечер совместной игры <br> играем во что ты захочешь" },
+    { id: 4, icon: "🎧", title: "Купон №4", desc: "Длинное голосовое сообщение<br> (с текстом, который ты выберешь)" },
+    { id: 5, icon: "⭐", title: "Купон №5", desc: "Особый купон<br> одно желание на твоё усмотрение" },
+    { id: 6, icon: "💋", title: "Купон №6", desc: "Безлимитные поцелуи при следующей встрече" },
+    { id: 7, icon: "💖", title: "Купон №7", desc: "Купон на долгие обнимашки" },
+    { id: 8, icon: "💆", title: "Купон №8", desc: "Расслабляющий массаж от меня при встрече" },
+    { id: 9, icon: "🍫", title: "Купон №9", desc: "Купон на вкусняшку" },
+    { id: 10, icon: "📸", title: "Купон №10", desc: "Купон на совместную фотосессию при следующей встрече" }
+  ];
+
+  let unlockedCoupons = JSON.parse(localStorage.getItem('8march_coupons')) || [];
+  let isFinalUnlocked = localStorage.getItem('8march_final') === 'true'; // Запоминаем, что финалка открыта
+
+  function saveCoupons() {
+    localStorage.setItem('8march_coupons', JSON.stringify(unlockedCoupons));
+    document.getElementById('walletBadge').innerText = `${unlockedCoupons.length}/${ALL_COUPONS.length}`;
+  }
+  saveCoupons();
+
+  const cards = [
+    "С тобой рядом даже обычный день становится каким-то особенным и тёплым.",
+    "Мне нравится, как ты умеешь делать атмосферу вокруг себя уютной и спокойной.",
+    "У тебя есть редкое умение — делать людей рядом с собой счастливее.",
+    "Твоя улыбка — одна из тех вещей, которые могут мгновенно улучшить настроение.",
+    "В тебе удивительно сочетаются нежность и сила характера.",
+    "Ты умеешь быть искренней, и это делает тебя по-настоящему особенной.",
+    "Мне нравится, как ты смотришь на мир — с интересом и живыми эмоциями.",
+    "С тобой легко говорить обо всём и так же легко просто молчать.",
+    "У тебя очень тёплая энергия, рядом с тобой всегда спокойно.",
+    "Ты из тех людей, с которыми хочется делиться хорошими новостями.",
+    "У тебя есть особая красота — та, которую замечаешь не только глазами.",
+    "Твоя доброта чувствуется даже в мелочах.",
+    "Ты умеешь поддержать так, что сразу становится легче.",
+    "Иногда достаточно просто услышать твой голос, чтобы настроение стало лучше.",
+    "В тебе есть какая-то естественная элегантность и лёгкость.",
+    "Ты умеешь быть настоящей, и это очень ценное качество.",
+    "Мне нравится, как ты смеёшься — в этом столько искренности.",
+    "Ты умеешь создавать вокруг себя атмосферу тепла.",
+    "С тобой даже простые разговоры становятся интересными.",
+    "Ты из тех людей, которые делают мир немного лучше просто своим присутствием.",
+    "В тебе есть особая мягкость, которая притягивает людей.",
+    "Ты умеешь быть внимательной к другим, и это очень красиво.",
+    "У тебя удивительно тёплый взгляд.",
+    "Твоя улыбка способна растопить даже самый тяжёлый день.",
+    "Ты умеешь радоваться мелочам, и это вдохновляет.",
+    "С тобой рядом хочется быть лучше.",
+    "Ты умеешь слушать так, что чувствуешь себя по-настоящему понятым.",
+    "У тебя очень приятная и спокойная энергия.",
+    "В тебе есть что-то очень светлое.",
+    "Ты умеешь делать даже обычные моменты запоминающимися.",
+    "В твоём характере есть редкое сочетание мягкости и уверенности.",
+    "Ты умеешь находить красоту в простых вещах.",
+    "Твоё присутствие делает пространство вокруг уютнее.",
+    "Ты умеешь поддержать так, что это запоминается надолго.",
+    "У тебя очень искренние эмоции, и это чувствуется.",
+    "Ты умеешь быть собой, и это невероятно привлекательно.",
+    "С тобой легко чувствовать себя спокойно.",
+    "Ты умеешь вдохновлять даже без особых слов.",
+    "У тебя очень тёплая и добрая улыбка.",
+    "В тебе есть какая-то естественная гармония.",
+    "Ты умеешь делать людей рядом с собой счастливее.",
+    "Твоя искренность — одно из твоих самых красивых качеств.",
+    "Ты умеешь создавать атмосферу уюта вокруг себя.",
+    "У тебя есть редкая способность делать день лучше.",
+    "Ты очень светлый человек.",
+    "С тобой приятно даже просто проводить время.",
+    "У тебя есть особое очарование.",
+    "Ты умеешь поддерживать и вдохновлять одновременно.",
+    "В тебе есть удивительное спокойствие.",
+    "Ты умеешь быть настоящей, и это делает тебя особенной."
+  ];
+  const emojis = ["🌷","✨","💐","💖","🌸"];
+  const captions = ["моя любимая", "котёнок", "солнышко", "для тебя", "каждый день", "8 марта"];
+
+  const specialCards = [
+    "А ещё сегодня 9 месяцев❤️",
+    "Ты самое прекрасное, что со мной случалось 🌟",
+    "Ради тебя я готов на всё и даже больше 🔥",
+    "Ты делаешь этот мир ярче каждую секунду ✨",
+    "Моя любовь к тебе больше, чем вся эта вселенная 🌌"
+  ];
+  const specialEmojis = ["❤️", "🌟", "🔥", "✨", "🌌", "👑", "💝"];
+  const specialCaptions = ["особенная", "самая лучшая", "моя маленькая", "котёнок", "солнышко"];
+
+  const deck = document.getElementById('deck');
+  const scoreBoard = document.getElementById('scoreBoard');
+  const scoreText = document.getElementById('scoreText');
+  const prizeOverlay = document.getElementById('prizeOverlay');
+  const walletOverlay = document.getElementById('walletOverlay');
+  const restartBtn = document.getElementById('restartBtn');
+
+  const STACK_SIZE = 3;
+  const stackEls = [];
+  let dealtCount = 0;
+  let score = 0;
+  
+  const GOAL = 25;
+
+  let isPrizeTriggered = false; 
+  let isInfiniteMode = isFinalUnlocked;
+  let pendingFinal = false; // Флаг для перехода в бесконечный режим
+
+  function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function spawnFlower(){
+    const el = document.createElement("div");
+    el.className = "flower";
+    el.textContent = rand(["🌸", "🌷", "✨"]);
+    el.style.left = (Math.random()*100) + "vw";
+    el.style.fontSize = (14 + Math.random()*10) + "px";
+    el.style.opacity = (0.35 + Math.random()*0.45).toFixed(2);
+    el.style.animationDuration = (6 + Math.random()*6) + "s";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 13000);
+  }
+  setInterval(spawnFlower, 700);
+
+  function heartBurst(x,y, amount=12, spread=55, symbol="❤️"){
+    for(let i=0;i<amount;i++){
+      const h=document.createElement("div");
+      h.textContent= symbol;
+      h.style.position="fixed"; h.style.left=x+"px"; h.style.top=y+"px";
+      h.style.fontSize=(16+Math.random()*15)+"px";
+      h.style.pointerEvents="none"; h.style.zIndex="999999";
+      const angle=Math.random()*Math.PI*2;
+      const dist= 40 + Math.random()*spread;
+      h.animate([
+        { transform:"translate(-50%, -50%) scale(1)", opacity:1 },
+        { transform:`translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0.6)`, opacity:0 }
+      ],{duration: 800 + Math.random()*400, easing:"ease-out"});
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(), 1200);
+    }
+  }
+
+  function showPrizeModal(icon, title, desc, note, isDuplicate) {
+    document.getElementById('pIcon').innerHTML = icon;
+    document.getElementById('pTitle').innerText = title;
+    document.getElementById('pDesc').innerHTML = desc;
+    document.getElementById('pNote').innerText = note;
+    
+    const btn = document.getElementById('pBtn');
+    if (isDuplicate) {
+      btn.innerText = "Искать дальше";
+      btn.className = "btn btn-secondary";
+    } else {
+      btn.innerText = "Ура!";
+      btn.className = "btn btn-primary";
+    }
+
+    setTimeout(() => { prizeOverlay.classList.add("active"); }, 400);
+  }
+
+  function triggerSuperPrize() {
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    for(let i=0; i<3; i++) {
+      setTimeout(() => heartBurst(cx, cy, 30, window.innerWidth/1.5, rand(["🌸", "✨", "💖", "🎉"])), i * 150);
+    }
+
+    // Если всё собрано (10 купонов), ЭТО значит мы пролистали 25 раз ПОСЛЕ получения 10-го.
+    if (unlockedCoupons.length >= ALL_COUPONS.length) {
+      pendingFinal = true;
+      showPrizeModal("💖", "Поздравляю с 8 марта!", "С праздником тебя, мой любимый маффинчик с травкой.<br> Я очень сильно тебя люблю 💕", "Все купоны доступны для просмотра в кошельке!", false);
+      return;
+    }
+
+    const unownedCoupons = ALL_COUPONS.filter(c => !unlockedCoupons.includes(c.id));
+    const ownedCoupons = ALL_COUPONS.filter(c => unlockedCoupons.includes(c.id));
+    
+    let randomCoupon;
+    if (unownedCoupons.length > 0 && Math.random() < 0.85) {
+        randomCoupon = rand(unownedCoupons);
+    } else if (ownedCoupons.length > 0) {
+        randomCoupon = rand(ownedCoupons);
+    } else {
+        randomCoupon = rand(unownedCoupons); 
+    }
+
+    const isDuplicate = unlockedCoupons.includes(randomCoupon.id);
+
+    if (isDuplicate) {
+      showPrizeModal("😅", "Дубликат...", `Тебе выпал "${randomCoupon.title}", но он у тебя уже есть!`, "Свайпай дальше, чтобы найти оставшиеся купоны!", true);
+    } else {
+      unlockedCoupons.push(randomCoupon.id);
+      saveCoupons();
+      showPrizeModal(randomCoupon.icon, "Новый Купон!", `<b>${randomCoupon.title}</b><br><br>${randomCoupon.desc}`, "Сохранено в твой кошелек 💌", false);
+    }
+  }
+
+  function claimPrize() {
+    const btnRect = document.getElementById('pBtn').getBoundingClientRect();
+    heartBurst(btnRect.left + btnRect.width/2, btnRect.top + btnRect.height/2, 40, 300, "💖");
+
+    prizeOverlay.classList.remove("active");
+    score = 0; 
+    isPrizeTriggered = false; 
+
+    // Если это было ФИНАЛЬНОЕ сообщение - включаем режим бесконечности
+    if (pendingFinal) {
+        pendingFinal = false;
+        isInfiniteMode = true;
+        localStorage.setItem('8march_final', 'true');
+        restartBtn.classList.add('show');
+    }
+
+    updateScoreUI();
+  }
+
+  function renderWalletHTML() {
+    const list = document.getElementById('couponsList');
+    list.innerHTML = ""; 
+    ALL_COUPONS.forEach(c => {
+      const isUnlocked = unlockedCoupons.includes(c.id);
+      const item = document.createElement('div');
+      item.className = `coupon-item ${isUnlocked ? '' : 'locked'}`;
+      item.innerHTML = `
+        <div class="c-icon">${isUnlocked ? c.icon : '🔒'}</div>
+        <div class="c-info">
+          <div class="c-name">${c.title}</div>
+          <div class="c-desc">${isUnlocked ? c.desc : 'Свайпай, чтобы открыть этот купон...'}</div>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function openWallet() {
+    renderWalletHTML();
+    requestAnimationFrame(() => {
+      walletOverlay.classList.add('active');
+    });
+  }
+
+  function closeWallet() {
+    walletOverlay.classList.remove('active');
+  }
+
+  function hardReset() {
+    if(confirm("Точно хочешь удалить все собранные купоны и начать игру заново?")) {
+      unlockedCoupons = [];
+      localStorage.removeItem('8march_coupons');
+      localStorage.removeItem('8march_final');
+      saveCoupons();
+      score = 0;
+      isInfiniteMode = false;
+      pendingFinal = false;
+      restartBtn.classList.remove('show');
+      updateScoreUI();
+    }
+  }
+
+  function createCard(isTop){
+    const el = document.createElement('div');
+    el.className = 'card';
+    dealtCount++;
+
+    const isSpecial = (dealtCount % 7 === 0);
+    
+    const text  = isSpecial ? rand(specialCards) : rand(cards);
+    const emoji = isSpecial ? rand(specialEmojis) : rand(emojis);
+    const cap   = isSpecial ? rand(specialCaptions) : rand(captions);
+
+    if (isSpecial) el.classList.add("special");
+
+    const badgeHTML = isSpecial ? `<div class="super-badge">🌟 Особая (+3)</div>` : '';
+
+    el.innerHTML = `
+      ${badgeHTML}
+      <div class="photo">${emoji}</div>
+      <div class="text">${text}</div>
+      <div class="caption">${cap}</div>
+    `;
+
+    el.style.transition = isTop ? 'none' : 'transform 220ms ease, opacity 220ms ease';
+    deck.appendChild(el);
+    return el;
+  }
+
+  function layout(){
+    for (let i=0;i<stackEls.length;i++){
+      const el = stackEls[i];
+      el.classList.remove('back1','back2');
+      el.style.zIndex = String(100 - i);
+      if (i === 1) el.classList.add('back1');
+      if (i === 2) el.classList.add('back2');
+    }
+  }
+
+  function ensureStack(){
+    while (stackEls.length < STACK_SIZE) stackEls.push(createCard(stackEls.length === 0));
+    layout(); attachTopHandlers();
+  }
+
+  let pulling = false, startX = 0, startY = 0, dx = 0, dy = 0, moved = false, pid = null;
+
+  function attachTopHandlers(){
+    stackEls.forEach(el => { el.onpointerdown=null; el.onpointermove=null; el.onpointerup=null; el.onpointercancel=null; });
+    const top = stackEls[0]; if (!top) return;
+
+    top.onpointerdown = (e) => {
+      if(isPrizeTriggered || prizeOverlay.classList.contains('active') || walletOverlay.classList.contains('active')) return;
+
+      pulling = true; moved = false; pid = e.pointerId;
+      top.setPointerCapture(pid);
+      startX = e.clientX; startY = e.clientY; dx = 0; dy = 0;
+      top.style.transition = 'none';
+    };
+
+    top.onpointermove = (e) => {
+      if (!pulling || e.pointerId !== pid) return;
+      dx = e.clientX - startX; dy = e.clientY - startY;
+      if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
+      top.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${dx * 0.06}deg)`;
+    };
+
+    top.onpointerup = (e) => {
+      if (!pulling || e.pointerId !== pid) return;
+      pulling = false;
+      const shouldSwipe = moved && (Math.abs(dx) > 90);
+      top.style.transition = 'transform 220ms cubic-bezier(.2,.8,.2,1), opacity 180ms ease';
+
+      if (shouldSwipe) swipeOut(top, dx > 0 ? 1 : -1);
+      else {
+        top.style.transform = 'translate(-50%,-50%)';
+        setTimeout(()=>{ top.style.transition = 'transform 220ms ease, opacity 220ms ease'; }, 0);
+      }
+    };
+
+    top.onpointercancel = () => {
+      pulling = false; top.style.transition = 'transform 220ms ease'; top.style.transform = 'translate(-50%,-50%)';
+    };
+  }
+
+  function updateScoreUI() {
+    if (isInfiniteMode) {
+        scoreText.innerHTML = `${score} / &infin;`;
+    } else {
+        scoreText.innerText = `${Math.min(score, GOAL)} / ${GOAL}`;
+    }
+    
+    scoreBoard.classList.remove('pop'); 
+    void scoreBoard.offsetWidth; 
+    scoreBoard.classList.add('pop');
+  }
+
+  function swipeOut(el, dir){
+    const offX = dir * (window.innerWidth * 0.9);
+    const rot = dir * 18;
+    const isSpecial = el.classList.contains("special");
+    
+    heartBurst(window.innerWidth/2, window.innerHeight/2, isSpecial ? 22 : 12);
+    
+    score += isSpecial ? 3 : 1;
+    updateScoreUI();
+
+    if (!isInfiniteMode && score >= GOAL && !isPrizeTriggered) {
+      isPrizeTriggered = true; 
+      setTimeout(triggerSuperPrize, 300);
+    }
+
+    el.style.opacity = '0';
+    el.style.transform = `translate(calc(-50% + ${offX}px), calc(-50% + ${dy}px)) rotate(${rot}deg)`;
+
+    setTimeout(() => {
+      el.remove(); stackEls.shift(); stackEls.push(createCard(false));
+      const newTop = stackEls[0];
+      if (newTop){
+        newTop.style.transition = 'none'; newTop.style.transform = 'translate(-50%,-50%)';
+        requestAnimationFrame(()=> newTop.style.transition = 'transform 220ms ease, opacity 220ms ease');
+      }
+      layout(); attachTopHandlers(); dx = 0; dy = 0;
+    }, 200);
+  }
+
+  // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ---
+  window.onload = () => {
+      if (isInfiniteMode) {
+          restartBtn.classList.add('show');
+          updateScoreUI();
+      }
+  };
+
+  ensureStack();
+</script>
+</body>
+</html>
