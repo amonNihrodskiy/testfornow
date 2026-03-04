@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>С 8 Марта! 🌸</title>
 <style>
   *{ box-sizing:border-box; margin:0; padding:0; user-select:none; -webkit-tap-highlight-color:transparent; font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
@@ -15,46 +15,49 @@
     background: linear-gradient(180deg,#bfe9ff 0%,#ffe6f3 50%,#fff7d6 100%);
   }
 
-  .deck{ position:relative; width:min(420px, 92vw); height:min(580px, 86vh); }
+  .deck{ position:relative; width:min(420px, 88vw); height: 65vh; max-height: 520px; margin-top: 10px; }
 
- .card{
-    position:absolute; left:50%; top:50%; width:100%;
+  .card{
+    position:absolute; left:50%; top:50%; width:100%; height: 100%;
     transform: translate(-50%,-50%);
-    background: #ffffff; /* Полностью белый фон — больше ничего не просвечивает! */
-    border-radius:18px; padding:14px;
+    background: #ffffff; /* Белый непрозрачный фон */
+    border-radius:22px; padding:14px;
     border:1px solid rgba(0,0,0,0.06);
-    box-shadow:0 22px 55px rgba(0,0,0,0.16);
+    box-shadow:0 15px 40px rgba(0,0,0,0.12);
     display:flex; flex-direction:column; gap:12px;
-    touch-action:none; will-change: transform, opacity;
+    touch-action:none; will-change: transform;
   }
 
   .photo{
-    height:360px; border-radius:14px;
+    flex: 1;
+    min-height: 0; 
+    border-radius:16px;
     background:
       radial-gradient(circle at 25% 20%, rgba(255, 90, 160, 0.22), rgba(255,255,255,0)),
       radial-gradient(circle at 75% 22%, rgba(255, 184, 77, 0.22), rgba(255,255,255,0)),
       linear-gradient(180deg, rgba(191,233,255,0.55), rgba(255,230,243,0.65));
     border:1px solid rgba(0,0,0,0.05);
-    display:flex; align-items:center; justify-content:center; font-size:64px;
+    display:flex; align-items:center; justify-content:center; 
+    font-size: clamp(40px, 12vh, 70px);
   }
 
   .text{
-    min-height:54px; display:flex; align-items:center; justify-content:center;
-    text-align:center; font-weight:900; font-size:17px; line-height:1.35;
+    min-height: 60px; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-weight:900; font-size: clamp(15px, 4vw, 18px); line-height:1.35;
     color:#2b1b2a; padding:0 8px;
   }
 
-  .caption{ text-align:center; font-size:13px; font-weight:800; color: rgba(43,27,42,0.55); padding-bottom:2px; }
+  .caption{ text-align:center; font-size:13px; font-weight:800; color: rgba(43,27,42,0.55); padding-bottom:6px; }
 
-  /* ВОЗВРАЩАЕМ СТАРЫЙ ВИД НИЖНИХ КАРТОЧЕК (Без скрытия текста) */
-  .card.back1{ transform: translate(-50%,-50%) translate(10px, 10px) rotate(2deg) scale(0.985); opacity:0.78; filter: blur(0.2px); }
-  .card.back2{ transform: translate(-50%,-50%) translate(-10px, 16px) rotate(-2deg) scale(0.97); opacity:0.55; filter: blur(0.25px); }
+  /* --- ИСПРАВЛЕНО: ТЕПЕРЬ ЗАДНИЕ КАРТОЧКИ ПОЛНОСТЬЮ ВИДИМЫ (OPACITY 1) --- */
+  .card.back1{ transform: translate(-50%,-50%) translate(8px, 10px) rotate(2deg) scale(0.98); opacity: 1; z-index: 99; }
+  .card.back2{ transform: translate(-50%,-50%) translate(-8px, 16px) rotate(-2deg) scale(0.96); opacity: 1; z-index: 98; }
 
   .title{
-    position:fixed; top:40px; left:50%; transform:translateX(-50%);
-    font-size: clamp(20px, 5vw, 30px); font-weight:900; color:#2b1b2a;
+    position:fixed; top: clamp(20px, 4vh, 40px); left:50%; transform:translateX(-50%);
+    font-size: clamp(18px, 5vw, 26px); font-weight:900; color:#2b1b2a;
     text-align:center; background:rgba(255,255,255,0.85);
-    padding:10px 22px; border-radius:14px;
+    padding:10px 20px; border-radius:14px;
     box-shadow:0 8px 20px rgba(0,0,0,0.08); white-space: nowrap; z-index: 100;
   }
 
@@ -63,10 +66,8 @@
 
   .card.special {
     background: linear-gradient(135deg, #fffcf0 0%, #ffffff 100%);
-    border: 2px solid #ffcc00;
-    box-shadow: 0 15px 45px rgba(255, 204, 0, 0.35), 0 0 15px rgba(255, 204, 0, 0.4);
+    border: 2px solid #ffcc00; box-shadow: 0 15px 45px rgba(255, 204, 0, 0.35), 0 0 15px rgba(255, 204, 0, 0.4);
   }
-  
   .card.special .photo {
     background:
       radial-gradient(circle at 30% 25%, rgba(255, 204, 0, 0.4), rgba(255,255,255,0)),
@@ -74,34 +75,35 @@
       linear-gradient(180deg, #fffae6, #ffe6f3);
     border: 1px solid rgba(255, 204, 0, 0.3);
   }
-  
-  .card.special .text { font-size:18px; color: #d62828; }
+  .card.special .text { color: #d62828; }
   .card.special .caption { color: #d62828; font-weight:900; }
 
   .super-badge {
-    position: absolute; top: -12px; right: -12px;
+    position: absolute; top: -12px; right: -8px;
     background: linear-gradient(135deg, #ff5e62, #ff9966); color: white;
-    padding: 6px 14px; border-radius: 20px; font-weight: 900; font-size: 14px;
+    padding: 6px 12px; border-radius: 20px; font-weight: 900; font-size: 13px;
     box-shadow: 0 4px 12px rgba(255, 94, 98, 0.5); transform: rotate(5deg);
     animation: pulseBadge 1.5s infinite; z-index: 10;
   }
   @keyframes pulseBadge { 0%, 100% { transform: rotate(5deg) scale(1); } 50% { transform: rotate(5deg) scale(1.1); } }
 
   .bottom-bar {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 15px; z-index: 1000; align-items: center;
+    position: fixed; bottom: clamp(20px, 4vh, 30px); left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 1000; align-items: center; width: 92vw; max-width: 400px;
+    justify-content: space-between;
   }
 
   .score-board {
-    background: rgba(255, 255, 255, 0.95); padding: 10px 24px;
-    border-radius: 30px; font-size: 18px; font-weight: 800; color: #2b1b2a;
+    background: rgba(255, 255, 255, 0.95); padding: 10px 16px;
+    border-radius: 30px; font-size: clamp(14px, 4vw, 16px); font-weight: 800; color: #2b1b2a;
     box-shadow: 0 8px 25px rgba(255, 90, 160, 0.25);
-    display: flex; align-items: center; gap: 8px; transition: transform 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px; 
+    transition: transform 0.15s; flex: 1; white-space: nowrap;
   }
-  .score-board.pop {  }
+  .score-board.pop { transform: scale(1.08); }
 
   .wallet-btn {
-    background: linear-gradient(135deg, #ff8da1, #ff3385);
+    background: linear-gradient(135deg, #ff8da1, #ff3385); flex-shrink: 0;
     width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-size: 22px; color: white; border: none; box-shadow: 0 8px 20px rgba(255, 51, 133, 0.4); cursor: pointer;
     transition: transform 0.2s; position: relative;
@@ -113,11 +115,11 @@
   }
 
   .restart-btn {
-    position: fixed; bottom: 130px; left: 50%; transform: translateX(-50%) scale(0.8);
-    background: rgba(255, 255, 255, 0.85); border: 2px solid #ff8da1; color: #ff3385;
+    position: fixed; bottom: clamp(80px, 12vh, 100px); left: 50%; transform: translateX(-50%) scale(0.8);
+    background: rgba(255, 255, 255, 0.9); border: 2px solid #ff8da1; color: #ff3385;
     padding: 10px 24px; border-radius: 25px; font-weight: 800; font-size: 15px;
     cursor: pointer; opacity: 0; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 100; backdrop-filter: blur(5px); box-shadow: 0 4px 15px rgba(255, 51, 133, 0.2);
+    z-index: 100; box-shadow: 0 4px 15px rgba(255, 51, 133, 0.2); white-space: nowrap;
   }
   .restart-btn.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) scale(1); }
   .restart-btn:active { transform: translateX(-50%) scale(0.95); }
@@ -131,20 +133,20 @@
 
   .prize-card {
     background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
-    width: min(380px, 90vw); padding: 30px 20px; border-radius: 20px;
+    width: min(360px, 90vw); padding: 24px 20px; border-radius: 20px;
     text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.4); border: 2px solid #ffb84d; 
     transform: scale(0.85); opacity: 0; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
-    display: flex; flex-direction: column; gap: 15px; will-change: transform, opacity;
+    display: flex; flex-direction: column; gap: 12px; will-change: transform, opacity;
   }
   .overlay.active .prize-card { transform: scale(1); opacity: 1; }
 
-  .prize-icon { font-size: 60px; line-height: 1; animation: float 3s ease-in-out infinite; }
-  .prize-title { font-size: 24px; font-weight: 900; color: #ff3385; text-transform: uppercase; }
-  .prize-desc { font-size: 16px; font-weight: 600; color: #5a4b59; line-height: 1.4; min-height: 44px;}
-  .prize-note { font-size: 13px; font-weight: 700; color: #ff8da1; }
+  .prize-icon { font-size: 55px; line-height: 1; animation: float 3s ease-in-out infinite; }
+  .prize-title { font-size: 22px; font-weight: 900; color: #ff3385; text-transform: uppercase; }
+  .prize-desc { font-size: 15px; font-weight: 600; color: #5a4b59; line-height: 1.4; min-height: 44px;}
+  .prize-note { font-size: 12px; font-weight: 700; color: #ff8da1; }
   
   .btn {
-    margin-top: 10px; border: none; padding: 14px 24px; font-size: 17px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: transform 0.2s;
+    margin-top: 10px; border: none; padding: 14px 24px; font-size: 16px; font-weight: 800; border-radius: 30px; cursor: pointer; transition: transform 0.2s;
   }
   .btn:active { transform: scale(0.95); }
   .btn-primary { background: linear-gradient(90deg, #ff3385, #ff8da1); color: white; box-shadow: 0 8px 20px rgba(255, 51, 133, 0.4); }
@@ -160,8 +162,8 @@
   .overlay.active .wallet-modal { transform: scale(1); opacity: 1; }
   
   .wallet-header { display: flex; justify-content: space-between; align-items: center; }
-  .wallet-title { font-size: 22px; font-weight: 900; color: #2b1b2a; }
-  .close-btn { background: none; border: none; font-size: 32px; line-height: 1; font-weight: bold; color: #ccc; cursor: pointer; padding: 0 5px; }
+  .wallet-title { font-size: 20px; font-weight: 900; color: #2b1b2a; }
+  .close-btn { background: none; border: none; font-size: 32px; line-height: 1; font-weight: bold; color: #ccc; cursor: pointer; padding: 0 5px; margin-top: -5px;}
   
   .coupons-list {
     display: flex; flex-direction: column; gap: 10px; overflow-y: auto;
@@ -171,11 +173,11 @@
   .coupons-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
   .coupons-list::-webkit-scrollbar-thumb { background: #ff8da1; border-radius: 10px; }
 
-  .coupon-item { background: #fdf2f8; border: 2px dashed #ffb8d2; padding: 12px 15px; border-radius: 14px; display: flex; gap: 15px; align-items: center; }
+  .coupon-item { background: #fdf2f8; border: 2px dashed #ffb8d2; padding: 12px; border-radius: 14px; display: flex; gap: 12px; align-items: center; }
   .coupon-item.locked { background: #f5f5f5; border: 2px dashed #e0e0e0; filter: grayscale(1); opacity: 0.7; }
-  .c-icon { font-size: 28px; }
+  .c-icon { font-size: 26px; }
   .c-info { display: flex; flex-direction: column; text-align: left; }
-  .c-name { font-weight: 800; font-size: 15px; color: #2b1b2a; }
+  .c-name { font-weight: 800; font-size: 14px; color: #2b1b2a; }
   .coupon-item.locked .c-name { color: #888; }
   .c-desc { font-size: 12px; font-weight: 600; color: #777; margin-top: 2px; line-height: 1.2;}
 
@@ -187,12 +189,12 @@
 
 <div class="deck" id="deck"></div>
 
-<!-- Новая кнопка Начать заново -->
+<!-- Кнопка Начать заново -->
 <button class="restart-btn" id="restartBtn" onclick="hardReset()">Начать заново</button>
 
 <div class="bottom-bar">
   <div class="score-board" id="scoreBoard">
-    <span>💖 Уровень вессенего настроения:</span> <span id="scoreText">0 / 25</span>
+    <span>💖 Настроение:</span> <span id="scoreText">0 / 25</span>
   </div>
   <button class="wallet-btn" onclick="openWallet()">
     💌
@@ -239,7 +241,7 @@
   ];
 
   let unlockedCoupons = JSON.parse(localStorage.getItem('8march_coupons')) || [];
-  let isFinalUnlocked = localStorage.getItem('8march_final') === 'true'; // Запоминаем, что финалка открыта
+  let isFinalUnlocked = localStorage.getItem('8march_final') === 'true'; 
 
   function saveCoupons() {
     localStorage.setItem('8march_coupons', JSON.stringify(unlockedCoupons));
@@ -328,7 +330,7 @@
 
   let isPrizeTriggered = false; 
   let isInfiniteMode = isFinalUnlocked;
-  let pendingFinal = false; // Флаг для перехода в бесконечный режим
+  let pendingFinal = false; 
 
   function rand(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
@@ -388,7 +390,6 @@
       setTimeout(() => heartBurst(cx, cy, 30, window.innerWidth/1.5, rand(["🌸", "✨", "💖", "🎉"])), i * 150);
     }
 
-    // Если всё собрано (10 купонов), ЭТО значит мы пролистали 25 раз ПОСЛЕ получения 10-го.
     if (unlockedCoupons.length >= ALL_COUPONS.length) {
       pendingFinal = true;
       showPrizeModal("💖", "Поздравляю с 8 марта!", "С праздником тебя, мой любимый маффинчик с травкой.<br> Я очень сильно тебя люблю 💕", "Все купоны доступны для просмотра в кошельке!", false);
@@ -426,7 +427,6 @@
     score = 0; 
     isPrizeTriggered = false; 
 
-    // Если это было ФИНАЛЬНОЕ сообщение - включаем режим бесконечности
     if (pendingFinal) {
         pendingFinal = false;
         isInfiniteMode = true;
@@ -603,7 +603,6 @@
     }, 200);
   }
 
-  // --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ---
   window.onload = () => {
       if (isInfiniteMode) {
           restartBtn.classList.add('show');
