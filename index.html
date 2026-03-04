@@ -269,7 +269,75 @@
   .restart-btn{ bottom: 84px; }
 }
 
+/* --- MOBILE: реально уменьшаем карточку И по ширине, и по высоте --- */
+@media (max-width: 480px) {
 
+  /* 1) Колода уже по ширине */
+  .deck{
+    width: min(360px, 86vw);
+    height: min(520px, 74vh);
+  }
+
+  /* 2) Карточка компактнее */
+  .card{
+    padding: 10px;
+    border-radius: 16px;
+    gap: 10px;
+    box-shadow: 0 16px 38px rgba(0,0,0,0.14);
+  }
+
+  /* 3) Фото меньше */
+  .photo{
+    height: min(260px, 38vh);
+    border-radius: 12px;
+    font-size: 54px;
+  }
+
+  /* 4) Текст и подпись меньше */
+  .text{
+    min-height: 44px;
+    font-size: 15px;
+    line-height: 1.25;
+    padding: 0 6px;
+  }
+  .caption{
+    font-size: 12px;
+  }
+
+  /* 5) Заголовок компактнее и чуть выше */
+  .title{
+    top: 16px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: clamp(18px, 4.4vw, 24px);
+  }
+
+  /* 6) Нижняя панель: меньше и ниже */
+  .bottom-bar{
+    bottom: 10px;
+    gap: 10px;
+  }
+
+  .score-board{
+    padding: 8px 14px;
+    font-size: 15px;
+    border-radius: 22px;
+    box-shadow: 0 6px 18px rgba(255, 90, 160, 0.18);
+  }
+
+  .wallet-btn{
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+}
+
+/* если экран прям низкий — ещё ужимаем */
+@media (max-height: 680px) and (max-width: 480px) {
+  .deck{ height: min(480px, 70vh); }
+  .photo{ height: min(230px, 34vh); }
+  .bottom-bar{ bottom: 8px; }
+}
 </style>
 </head>
 <body>
