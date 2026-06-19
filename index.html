@@ -60,8 +60,8 @@ canvas { display: block; width: 100%; height: 100%; }
   align-items: center;
   justify-content: center;
   z-index: 20;
-  background: rgba(26, 0, 16, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(26, 0, 16, 0.9);
+  backdrop-filter: blur(10px);
   padding: 20px;
   text-align: center;
 }
@@ -80,7 +80,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
   margin: 8px;
   cursor: pointer;
   box-shadow: 0 4px 15px rgba(224, 16, 90, 0.4);
-  width: 220px;
+  width: 230px;
   transition: transform 0.1s;
 }
 .btn:active { transform: scale(0.95); }
@@ -109,7 +109,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .skin-item.locked { opacity: 0.4; filter: grayscale(1); cursor: default; }
 .skin-item.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
 .skin-icon { font-size: 1.6rem; margin-bottom: 5px; }
-.skin-title { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; }
+.skin-title { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; color: #ffcce6; }
 .skin-price { font-size: 0.6rem; color: #ff9ec8; }
 
 /* Achievements List */
@@ -157,11 +157,16 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 
 @media (min-width: 600px) and (min-height: 600px) {
   #game-wrapper { display: none; }
-  #desktop-msg { display: block; text-align: center; padding: 50px; }
+  #desktop-msg { display: block; text-align: center; padding: 50px; color: #ffcce6; }
 }
 </style>
 </head>
 <body>
+
+<div id="desktop-msg">
+  <h1>📱💕</h1>
+  <p>Эта игра создана для телефона.<br>Пожалуйста, открой её на смартфоне!</p>
+</div>
 
 <div id="game-wrapper">
   <div id="hud" style="display:none">
@@ -172,7 +177,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Меню -->
+  <!-- Главное меню -->
   <div class="screen" id="menu-screen">
     <h1>Heart Jump</h1>
     <div class="subtitle">самой лучшей девочке во вселенной 💕</div>
@@ -207,7 +212,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 </div>
 
 <script>
-// ===================== ДАННЫЕ =====================
+// ===================== НАСТРОЙКИ И ДАННЫЕ =====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -226,17 +231,14 @@ const SKINS = [
   { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 5000, reqType: 'total' },
   { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 20000, reqType: 'total' },
   { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 100000, reqType: 'total' },
-  { id: 'vika', char: 'vika.png', title: 'Лучшая девочка', type: 'image', req: 50, reqType: 'total' }
+  { id: 'vika', char: 'vika.png', title: 'Лучшая девочка', type: 'image', req: 500000, reqType: 'total' }
 ];
 
 const ACHIEVEMENTS = [
-  // За один заход (Best Score)
   { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
   { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
   { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
   { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
-  
-  // Всего в сумме (Total Score)
   { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
   { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
   { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
@@ -257,7 +259,6 @@ const COMPLIMENTS = [
   "Твой рекорд скоро падет, я верю! 🌙"
 ];
 
-// СОСТОЯНИЕ
 let score = 0;
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
@@ -271,7 +272,7 @@ let tilt = 0;
 let rocketTimer = 0, magnetTimer = 0;
 let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== ЛОГИКА =====================
+// ===================== ИНИЦИАЛИЗАЦИЯ =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -299,7 +300,7 @@ function startGame() {
     vx: 0, vy: JUMP_FORCE
   };
 
-  // Стартовая опора
+  // Начальная платформа
   platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1, side: 0, speed: 0 });
 
   for (let i = 0; i < 15; i++) {
@@ -325,19 +326,15 @@ function spawnPlatform(y) {
   if (Math.random() < 0.07) type = PT.STAR;
 
   const newPlat = { 
-    x, y, type, 
-    used: false, 
-    opacity: 1, 
+    x, y, type, used: false, opacity: 1, 
     side: Math.random() < 0.5 ? 1 : -1,
     speed: 1.5 + Math.random() * 1.5
   };
-
   platforms.push(newPlat);
 
   if (score > 50 && Math.random() < 0.1) {
     boosts.push({ 
-      parent: newPlat, 
-      offX: PLAT_W/2 - 12, offY: -25, 
+      parent: newPlat, offX: PLAT_W/2 - 12, offY: -25, 
       type: Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET), 
       active: true, x: 0, y: 0 
     });
@@ -365,7 +362,7 @@ function update() {
   if (currentHeight > score) {
     score = currentHeight;
     updateHUD();
-    checkAchievements(); // Проверяем рекорды на лету
+    checkAchievements();
   }
 
   platforms.forEach(p => {
@@ -378,7 +375,6 @@ function update() {
       if (p.type === PT.LOOSE) p.y += 8;
     }
 
-    // Коллизия: только если летим вниз
     if (player.vy > 0 && p.opacity > 0.3 &&
         player.x + 10 < p.x + PLAT_W && player.x + player.w - 10 > p.x && 
         player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy + 5) {
@@ -398,9 +394,7 @@ function update() {
   boosts.forEach(b => {
     b.x = b.parent.x + b.offX;
     b.y = b.parent.y + b.offY;
-
-    if (b.active && 
-        player.x < b.x + 30 && player.x + player.w > b.x && 
+    if (b.active && player.x < b.x + 30 && player.x + player.w > b.x && 
         player.y < b.y + 30 && player.y + player.h > b.y) {
       b.active = false;
       if (b.type === BT.SPRING) player.vy = SPRING_FORCE;
@@ -438,12 +432,12 @@ function endGame() {
     bestScore = score;
     localStorage.setItem('hj_best', bestScore);
   }
+  checkAchievements(); // Проверка накопительных в конце
   
   document.getElementById('go-title').textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
   document.getElementById('go-score-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
   document.getElementById('hud').style.display = 'none';
   showScreen('gameover-screen');
-  checkAchievements();
 }
 
 // ===================== РЕНДЕР =====================
@@ -451,6 +445,7 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (gameState === 'playing' || gameState === 'gameover') {
+    // Рисуем платформы
     platforms.forEach(p => {
       ctx.save();
       ctx.globalAlpha = p.opacity;
@@ -459,12 +454,10 @@ function draw() {
       if (p.type === PT.FRAGILE) color = '#a18cd1';
       if (p.type === PT.LOOSE) color = '#f093fb';
       if (p.type === PT.STAR) color = p.used ? '#555' : '#ffd700';
-
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8);
       ctx.fill();
-      
       if (p.type === PT.STAR && !p.used) {
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 12px Nunito';
@@ -473,14 +466,19 @@ function draw() {
       ctx.restore();
     });
 
+    // Рисуем бустеры
     boosts.forEach(b => {
       if (!b.active) return;
+      ctx.globalAlpha = 1.0; // Сброс прозрачности для бустеров
       let emoji = (b.type === BT.SPRING) ? '🌀' : (b.type === BT.ROCKET ? '🚀' : '🧲');
       ctx.font = '26px serif';
       ctx.fillText(emoji, b.x, b.y - cameraY + 22);
     });
 
+    // ВАЖНО: Сбрасываем прозрачность перед отрисовкой персонажа
+    ctx.globalAlpha = 1.0;
     const skin = SKINS.find(s => s.id === currentSkin);
+    
     if (skin.type === 'emoji') {
       ctx.font = '42px serif';
       ctx.textAlign = 'center';
@@ -505,8 +503,8 @@ function draw() {
       ctx.font = 'bold 22px Nunito';
       ctx.fillText(t.text, t.x - 20, t.y - cameraY);
     });
+    ctx.globalAlpha = 1.0;
   }
-
   requestAnimationFrame(draw);
 }
 
