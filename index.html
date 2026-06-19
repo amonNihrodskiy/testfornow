@@ -20,6 +20,19 @@ body {
   color: #fff;
 }
 
+/* Сообщение для ПК */
+#desktop-msg {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  color: #ffcce6;
+}
+#desktop-msg h1 { font-size: 4rem; margin-bottom: 20px; }
+
+/* Обертка игры */
 #game-wrapper {
   position: relative;
   width: 100vw;
@@ -28,6 +41,13 @@ body {
   overflow: hidden;
   background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%);
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  display: flex; /* По умолчанию на мобильных показываем игру */
+}
+
+/* Логика скрытия/показа экрана в зависимости от устройства */
+@media (min-width: 650px) {
+  #game-wrapper { display: none !important; }
+  #desktop-msg { display: flex !important; }
 }
 
 canvas { display: block; width: 100%; height: 100%; }
@@ -51,7 +71,7 @@ canvas { display: block; width: 100%; height: 100%; }
   z-index: 10;
 }
 
-/* Screens */
+/* Экраны (Меню, Скины и т.д.) */
 .screen {
   position: absolute;
   inset: 0;
@@ -86,7 +106,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .btn:active { transform: scale(0.95); }
 .btn.secondary { background: transparent; border: 2px solid #ff5fa0; color: #ff9ec8; box-shadow: none; }
 
-/* Skins Grid */
+/* Скины */
 .skins-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -112,7 +132,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .skin-title { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; color: #ffcce6; }
 .skin-price { font-size: 0.6rem; color: #ff9ec8; }
 
-/* Achievements List */
+/* Достижения */
 .ach-list {
   width: 100%;
   max-height: 380px;
@@ -136,7 +156,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .ach-info b { display: block; font-size: 0.9rem; color: #ffcce6; }
 .ach-info span { font-size: 0.75rem; color: #ff9ec8; opacity: 0.8; }
 
-/* Toast */
+/* Всплывашка достижений */
 #ach-toast {
   position: absolute;
   top: 80px;
@@ -154,18 +174,13 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 #ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media (min-width: 600px) and (min-height: 600px) {
-  #game-wrapper { display: none; }
-  #desktop-msg { display: block; text-align: center; padding: 50px; color: #ffcce6; }
-}
 </style>
 </head>
 <body>
 
 <div id="desktop-msg">
   <h1>📱💕</h1>
-  <p>Эта игра создана для телефона.<br>Пожалуйста, открой её на смартфоне!</p>
+  <p>Эта игра создана специально для телефона.<br>Пожалуйста, открой её на своём смартфоне!</p>
 </div>
 
 <div id="game-wrapper">
@@ -186,21 +201,21 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
     <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
   </div>
 
-  <!-- Скины -->
+  <!-- Экран скинов -->
   <div class="screen" id="skins-screen" style="display:none">
     <h1>Твои образы</h1>
     <div class="skins-grid" id="skins-grid"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Достижения -->
+  <!-- Экран достижений -->
   <div class="screen" id="ach-screen" style="display:none">
     <h1>Достижения</h1>
     <div class="ach-list" id="ach-list"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Конец игры -->
+  <!-- Экран проигрыша -->
   <div class="screen" id="gameover-screen" style="display:none">
     <h1 id="go-title">Не расстраивайся!</h1>
     <div class="subtitle" id="go-score-msg">Ты умничка!</div>
@@ -235,10 +250,12 @@ const SKINS = [
 ];
 
 const ACHIEVEMENTS = [
+  // За один полет
   { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
   { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
   { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
   { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
+  // Накопительные
   { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
   { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
   { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
@@ -259,6 +276,7 @@ const COMPLIMENTS = [
   "Твой рекорд скоро падет, я верю! 🌙"
 ];
 
+// СОСТОЯНИЕ
 let score = 0;
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
@@ -272,7 +290,7 @@ let tilt = 0;
 let rocketTimer = 0, magnetTimer = 0;
 let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== ИНИЦИАЛИЗАЦИЯ =====================
+// ===================== ОСНОВНАЯ ЛОГИКА =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -300,7 +318,7 @@ function startGame() {
     vx: 0, vy: JUMP_FORCE
   };
 
-  // Начальная платформа
+  // Опора в начале
   platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1, side: 0, speed: 0 });
 
   for (let i = 0; i < 15; i++) {
@@ -432,7 +450,7 @@ function endGame() {
     bestScore = score;
     localStorage.setItem('hj_best', bestScore);
   }
-  checkAchievements(); // Проверка накопительных в конце
+  checkAchievements(); 
   
   document.getElementById('go-title').textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
   document.getElementById('go-score-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
@@ -440,12 +458,12 @@ function endGame() {
   showScreen('gameover-screen');
 }
 
-// ===================== РЕНДЕР =====================
+// ===================== ОТРИСОВКА =====================
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (gameState === 'playing' || gameState === 'gameover') {
-    // Рисуем платформы
+    // Платформы
     platforms.forEach(p => {
       ctx.save();
       ctx.globalAlpha = p.opacity;
@@ -466,16 +484,16 @@ function draw() {
       ctx.restore();
     });
 
-    // Рисуем бустеры
+    // Бустеры
     boosts.forEach(b => {
       if (!b.active) return;
-      ctx.globalAlpha = 1.0; // Сброс прозрачности для бустеров
+      ctx.globalAlpha = 1.0; 
       let emoji = (b.type === BT.SPRING) ? '🌀' : (b.type === BT.ROCKET ? '🚀' : '🧲');
       ctx.font = '26px serif';
       ctx.fillText(emoji, b.x, b.y - cameraY + 22);
     });
 
-    // ВАЖНО: Сбрасываем прозрачность перед отрисовкой персонажа
+    // Сброс прозрачности для персонажа (ВАЖНО!)
     ctx.globalAlpha = 1.0;
     const skin = SKINS.find(s => s.id === currentSkin);
     
@@ -508,7 +526,7 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// ===================== UI =====================
+// ===================== ИНТЕРФЕЙС =====================
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   if (id !== 'none') document.getElementById(id).style.display = 'flex';
