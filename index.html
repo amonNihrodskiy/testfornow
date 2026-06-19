@@ -40,7 +40,7 @@ canvas { display: block; width: 100%; height: 100%; }
   z-index: 10;
   pointer-events: none;
 }
-#score-val { font-size: 2rem; font-weight: 900; color: #ffcce6; text-shadow: 0 0 10px #ff69b4; }
+#score-val { font-size: 2.2rem; font-weight: 900; color: #ffcce6; text-shadow: 0 0 10px #ff69b4; }
 #total-val { font-size: 0.8rem; opacity: 0.8; color: #ff9ec8; }
 
 #boost-hud {
@@ -67,7 +67,7 @@ canvas { display: block; width: 100%; height: 100%; }
 }
 
 h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bottom: 10px; }
-.subtitle { color: #ff9ec8; margin-bottom: 30px; font-size: 1rem; }
+.subtitle { color: #ff9ec8; margin-bottom: 25px; font-size: 1rem; line-height: 1.4; }
 
 .btn {
   background: linear-gradient(135deg, #ff5fa0, #e0105a);
@@ -90,31 +90,32 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .skins-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: 12px;
   margin-bottom: 25px;
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
 }
 .skin-item {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border: 2px solid transparent;
   border-radius: 15px;
-  padding: 15px;
+  padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: 0.2s;
 }
-.skin-item.locked { opacity: 0.4; filter: grayscale(1); }
+.skin-item.locked { opacity: 0.4; filter: grayscale(1); cursor: default; }
 .skin-item.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
-.skin-icon { font-size: 1.8rem; margin-bottom: 5px; }
-.skin-price { font-size: 0.65rem; color: #ff9ec8; }
+.skin-icon { font-size: 1.6rem; margin-bottom: 5px; }
+.skin-title { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; }
+.skin-price { font-size: 0.6rem; color: #ff9ec8; }
 
 /* Achievements List */
 .ach-list {
   width: 100%;
-  max-height: 350px;
+  max-height: 380px;
   overflow-y: auto;
   margin-bottom: 20px;
   padding-right: 5px;
@@ -128,46 +129,39 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
   align-items: center;
   gap: 15px;
   text-align: left;
-  border-left: 4px solid #555;
+  border-left: 4px solid #444;
 }
 .ach-item.unlocked { border-left-color: #ff5fa0; background: rgba(255, 95, 160, 0.1); }
 .ach-icon { font-size: 1.5rem; }
 .ach-info b { display: block; font-size: 0.9rem; color: #ffcce6; }
 .ach-info span { font-size: 0.75rem; color: #ff9ec8; opacity: 0.8; }
 
-/* Toast Achievement */
+/* Toast */
 #ach-toast {
   position: absolute;
-  top: 100px;
+  top: 80px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
   background: linear-gradient(135deg, #ff5fa0, #e0105a);
-  padding: 12px 20px;
+  padding: 12px 25px;
   border-radius: 15px;
   z-index: 100;
   opacity: 0;
   transition: 0.5s;
   pointer-events: none;
-  width: 80%;
+  width: 85%;
   text-align: center;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 #ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-#desktop-msg { display: none; text-align: center; padding: 20px; color: #ffcce6; }
-
 @media (min-width: 600px) and (min-height: 600px) {
   #game-wrapper { display: none; }
-  #desktop-msg { display: block; }
+  #desktop-msg { display: block; text-align: center; padding: 50px; }
 }
 </style>
 </head>
 <body>
-
-<div id="desktop-msg">
-  <h1>📱💕</h1>
-  <p>Эта игра создана для телефона.<br>Пожалуйста, открой её на смартфоне, чтобы играть наклонами!</p>
-</div>
 
 <div id="game-wrapper">
   <div id="hud" style="display:none">
@@ -178,10 +172,10 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Главное меню -->
+  <!-- Меню -->
   <div class="screen" id="menu-screen">
     <h1>Heart Jump</h1>
-    <div class="subtitle">для самой любимой девочки 💕</div>
+    <div class="subtitle">самой лучшей девочке во вселенной 💕</div>
     <button class="btn" onclick="startGame()">Новая игра</button>
     <button class="btn secondary" onclick="showScreen('skins-screen')">Скины</button>
     <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
@@ -189,22 +183,22 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 
   <!-- Скины -->
   <div class="screen" id="skins-screen" style="display:none">
-    <h1>Выбери образ</h1>
+    <h1>Твои образы</h1>
     <div class="skins-grid" id="skins-grid"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
   <!-- Достижения -->
   <div class="screen" id="ach-screen" style="display:none">
-    <h1>Твои успехи</h1>
+    <h1>Достижения</h1>
     <div class="ach-list" id="ach-list"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
   <!-- Конец игры -->
   <div class="screen" id="gameover-screen" style="display:none">
-    <h1 id="go-title">Упс! 💔</h1>
-    <div class="subtitle" id="go-score-msg">Ты пролетела 0 метров</div>
+    <h1 id="go-title">Не расстраивайся!</h1>
+    <div class="subtitle" id="go-score-msg">Ты умничка!</div>
     <button class="btn" onclick="startGame()">Еще раз</button>
     <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
   </div>
@@ -213,58 +207,71 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 </div>
 
 <script>
-// ===================== НАСТРОЙКИ И ДАННЫЕ =====================
+// ===================== ДАННЫЕ =====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const PLAT_W = 75;
 const PLAT_H = 15;
-const GRAVITY = 0.35;
-const JUMP_FORCE = -11;
-const SPRING_FORCE = -18;
+const GRAVITY = 0.38;
+const JUMP_FORCE = -12.5;
+const SPRING_FORCE = -20;
 
-// Типы платформ
 const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, STAR: 4 };
-// Типы бустеров
 const BT = { SPRING: 0, ROCKET: 1, MAGNET: 2 };
 
-// Скины
 const SKINS = [
   { id: 'red', char: '❤️', title: 'Классика', type: 'emoji', req: 0 },
   { id: 'pink', char: '💕', title: 'Нежность', type: 'emoji', req: 500, reqType: 'best' },
   { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 5000, reqType: 'total' },
-  { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 15000, reqType: 'total' },
-  { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 50000, reqType: 'total' },
-  { id: 'vika', char: 'vika.png', title: 'Моя Вика', type: 'image', req: 1000000, reqType: 'total' }
+  { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 20000, reqType: 'total' },
+  { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 100000, reqType: 'total' },
+  { id: 'vika', char: 'vika.png', title: 'Лучшая девочка', type: 'image', req: 50, reqType: 'total' }
 ];
 
-// Достижения
 const ACHIEVEMENTS = [
-  { id: 'first', icon: '💝', title: 'Начало пути', desc: 'Сделать первый прыжок', req: 1, type: 'games' },
-  { id: 'm100', icon: '🌸', title: 'Цветочек', desc: 'Набрать 100 метров', req: 100, type: 'best' },
-  { id: 'm500', icon: '✨', title: 'Сияние', desc: 'Набрать 500 метров', req: 500, type: 'best' },
-  { id: 'm1000', icon: '🌙', title: 'Лунная призма', desc: 'Набрать 1000 метров', req: 1000, type: 'best' },
-  { id: 'sum10k', icon: '🍭', title: 'Сладкоежка', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
-  { id: 'sum100k', icon: '🔥', title: 'Неудержимая', desc: '100,000 очков в сумме', req: 100000, type: 'total' },
-  { id: 'sum1m', icon: '💎', title: 'Моя Вселенная', desc: 'Собрать 1,000,000 очков', req: 1000000, type: 'total' },
+  // За один заход (Best Score)
+  { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
+  { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
+  { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
+  { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
+  
+  // Всего в сумме (Total Score)
+  { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
+  { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
+  { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
+  { id: 't15k', icon: '🧸', title: 'Прелесть', desc: '15,000 очков в сумме', req: 15000, type: 'total' },
+  { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50,000 очков в сумме', req: 50000, type: 'total' },
+  { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100,000 очков в сумме', req: 100000, type: 'total' },
+  { id: 't250k', icon: '🌈', title: 'Волшебная', desc: '250,000 очков в сумме', req: 250000, type: 'total' },
+  { id: 't500k', icon: '👑', title: 'Моя Вселенная', desc: '500,000 очков в сумме', req: 500000, type: 'total' }
 ];
 
-// Состояние
+const COMPLIMENTS = [
+  "Не расстраивайся, ты умничка! 💕",
+  "Ты моё солнышко, всё получится! ☀️",
+  "Для меня ты всегда номер один! 👑",
+  "Ты прыгаешь просто чудесно! ✨",
+  "Моя талантливая девочка, люблю тебя! 🌸",
+  "Ты самая лучшая, помни об этом! ❤️",
+  "Твой рекорд скоро падет, я верю! 🌙"
+];
+
+// СОСТОЯНИЕ
 let score = 0;
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
-let gamesPlayed = parseInt(localStorage.getItem('hj_games') || '0');
 let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
 let currentSkin = localStorage.getItem('hj_skin') || 'red';
 
 let gameState = 'menu';
 let cameraY = 0;
-let player, platforms, boosts, particles;
+let player, platforms, boosts, floatingTexts;
 let tilt = 0;
 let rocketTimer = 0, magnetTimer = 0;
 let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== ИНИЦИАЛИЗАЦИЯ =====================
+// ===================== ЛОГИКА =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -272,19 +279,10 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// Управление наклоном
 window.addEventListener('deviceorientation', e => {
   if (e.gamma !== null) tilt = Math.max(-1, Math.min(1, e.gamma / 25));
 });
 
-// Клик для старта (фиктивно для iOS)
-document.addEventListener('touchstart', () => {
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission();
-  }
-}, { once: true });
-
-// ===================== ЛОГИКА ИГРЫ =====================
 function startGame() {
   score = 0;
   cameraY = 0;
@@ -292,9 +290,8 @@ function startGame() {
   magnetTimer = 0;
   platforms = [];
   boosts = [];
-  particles = [];
+  floatingTexts = [];
   
-  // Игрок
   player = {
     x: canvas.width / 2 - 20,
     y: canvas.height - 150,
@@ -302,17 +299,12 @@ function startGame() {
     vx: 0, vy: JUMP_FORCE
   };
 
-  // Начальная платформа
-  platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1 });
+  // Стартовая опора
+  platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1, side: 0, speed: 0 });
 
-  // Генерация первых платформ
   for (let i = 0; i < 15; i++) {
-    spawnPlatform(canvas.height - 200 - (i * 80));
+    spawnPlatform(canvas.height - 200 - (i * 85));
   }
-
-  gamesPlayed++;
-  localStorage.setItem('hj_games', gamesPlayed);
-  checkAchievements();
 
   gameState = 'playing';
   showScreen('none');
@@ -325,119 +317,117 @@ function spawnPlatform(y) {
   let type = PT.NORMAL;
   const roll = Math.random();
 
-  if (score > 200) {
-    if (roll < 0.15) type = PT.LIFT;
-    else if (roll < 0.3) type = PT.FRAGILE;
-    else if (roll < 0.4) type = PT.LOOSE;
+  if (score > 100) {
+    if (roll < 0.2) type = PT.LIFT;
+    else if (roll < 0.35) type = PT.FRAGILE;
+    else if (roll < 0.45) type = PT.LOOSE;
   }
-  if (Math.random() < 0.05) type = PT.STAR;
+  if (Math.random() < 0.07) type = PT.STAR;
 
-  platforms.push({ x, y, type, used: false, opacity: 1, 
-    side: Math.random() < 0.5 ? 1 : -1, 
-    origX: x 
-  });
+  const newPlat = { 
+    x, y, type, 
+    used: false, 
+    opacity: 1, 
+    side: Math.random() < 0.5 ? 1 : -1,
+    speed: 1.5 + Math.random() * 1.5
+  };
 
-  // Бустеры (не сразу)
-  if (score > 100 && Math.random() < 0.08) {
-    const bType = Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET);
-    boosts.push({ x: x + PLAT_W / 2 - 10, y: y - 25, type: bType, active: true });
+  platforms.push(newPlat);
+
+  if (score > 50 && Math.random() < 0.1) {
+    boosts.push({ 
+      parent: newPlat, 
+      offX: PLAT_W/2 - 12, offY: -25, 
+      type: Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET), 
+      active: true, x: 0, y: 0 
+    });
   }
 }
 
 function update() {
   if (gameState !== 'playing') return;
 
-  // Движение
-  player.vx = tilt * 8;
+  player.vx = tilt * 9;
   if (!rocketTimer) player.vy += GRAVITY;
-  else {
-    player.vy = -10;
-    rocketTimer--;
-  }
+  else { player.vy = -12; rocketTimer--; }
 
   player.x += player.vx;
   player.y += player.vy;
 
-  // Магнит
-  if (magnetTimer > 0) {
-    magnetTimer--;
-    boosts.forEach(b => {
-      if (b.active && Math.abs(b.y - player.y) < 300) {
-        b.x += (player.x - b.x) * 0.1;
-        b.y += (player.y - b.y) * 0.1;
-      }
-    });
-  }
-
-  // Сквозной экран
   if (player.x > canvas.width) player.x = -player.w;
   if (player.x < -player.w) player.x = canvas.width;
 
-  // Камера
-  if (player.y < cameraY + canvas.height * 0.4) {
-    cameraY = player.y - canvas.height * 0.4;
+  if (player.y < cameraY + canvas.height * 0.45) {
+    cameraY = player.y - canvas.height * 0.45;
   }
 
-  // Очки (высота)
-  let currentHeight = Math.floor(Math.abs(cameraY) / 10);
+  let currentHeight = Math.floor(Math.abs(cameraY) / 15);
   if (currentHeight > score) {
     score = currentHeight;
     updateHUD();
+    checkAchievements(); // Проверяем рекорды на лету
   }
 
-  // Платформы
   platforms.forEach(p => {
-    // Коллизия (только если падаем вниз)
-    if (player.vy > 0 && 
-        player.x + 10 < p.x + PLAT_W && 
-        player.x + player.w - 10 > p.x && 
-        player.y + player.h > p.y && 
-        player.y + player.h < p.y + PLAT_H + player.vy + 2) {
+    if (p.type === PT.LIFT) {
+      p.x += p.side * p.speed;
+      if (p.x < 5 || p.x > canvas.width - PLAT_W - 5) p.side *= -1;
+    }
+    if (p.used) {
+      if (p.type === PT.FRAGILE) p.opacity -= 0.04;
+      if (p.type === PT.LOOSE) p.y += 8;
+    }
+
+    // Коллизия: только если летим вниз
+    if (player.vy > 0 && p.opacity > 0.3 &&
+        player.x + 10 < p.x + PLAT_W && player.x + player.w - 10 > p.x && 
+        player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy + 5) {
       
-      if (p.opacity > 0.5) {
-        if (p.type === PT.LOOSE) { p.used = true; player.vy = JUMP_FORCE; }
-        else if (p.type === PT.FRAGILE) { p.used = true; player.vy = JUMP_FORCE; }
-        else if (p.type === PT.STAR) { 
-           player.vy = JUMP_FORCE; 
-           if (!p.used) { score += 50; p.used = true; createBurst(p.x + PLAT_W/2, p.y, '#ffd700'); }
-        }
-        else { player.vy = JUMP_FORCE; }
+      player.y = p.y - player.h;
+      player.vy = JUMP_FORCE;
+
+      if (p.type === PT.STAR && !p.used) {
+        p.used = true;
+        addScoreEffect(50, p.x + PLAT_W/2, p.y);
+      } else {
+        p.used = true;
       }
     }
-
-    // Спец эффекты платформ
-    if (p.type === PT.LIFT) {
-      p.x += p.side * 2;
-      if (p.x < 0 || p.x > canvas.width - PLAT_W) p.side *= -1;
-    }
-    if (p.used && p.type === PT.FRAGILE) p.opacity -= 0.1;
-    if (p.used && p.type === PT.LOOSE) p.y += 10;
   });
 
-  // Сбор бустеров
   boosts.forEach(b => {
+    b.x = b.parent.x + b.offX;
+    b.y = b.parent.y + b.offY;
+
     if (b.active && 
-        player.x < b.x + 20 && player.x + player.w > b.x && 
-        player.y < b.y + 20 && player.y + player.h > b.y) {
+        player.x < b.x + 30 && player.x + player.w > b.x && 
+        player.y < b.y + 30 && player.y + player.h > b.y) {
       b.active = false;
       if (b.type === BT.SPRING) player.vy = SPRING_FORCE;
-      if (b.type === BT.ROCKET) rocketTimer = 200;
+      if (b.type === BT.ROCKET) rocketTimer = 180;
       if (b.type === BT.MAGNET) magnetTimer = 500;
-      createBurst(b.x, b.y, '#fff');
     }
   });
 
-  // Очистка и спавн новых платформ
-  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100);
-  boosts = boosts.filter(b => b.y - cameraY < canvas.height + 100);
+  floatingTexts.forEach((t, i) => {
+    t.y -= 2; t.life -= 0.02;
+    if (t.life <= 0) floatingTexts.splice(i, 1);
+  });
+
+  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0);
+  boosts = boosts.filter(b => b.y - cameraY < canvas.height + 100 && b.active);
   
-  if (platforms.length < 20) {
-    let lastY = platforms[platforms.length - 1].y;
-    spawnPlatform(lastY - 80);
+  if (platforms.length < 18) {
+    spawnPlatform(platforms[platforms.length - 1].y - 85);
   }
 
-  // Смерть
   if (player.y - cameraY > canvas.height + 100) endGame();
+}
+
+function addScoreEffect(pts, x, y) {
+  score += pts;
+  updateHUD();
+  floatingTexts.push({ x, y, text: `+${pts} 💕`, life: 1 });
 }
 
 function endGame() {
@@ -449,78 +439,81 @@ function endGame() {
     localStorage.setItem('hj_best', bestScore);
   }
   
-  document.getElementById('go-score-msg').textContent = `Ты пролетела ${score} метров!`;
+  document.getElementById('go-title').textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
+  document.getElementById('go-score-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
   document.getElementById('hud').style.display = 'none';
   showScreen('gameover-screen');
   checkAchievements();
 }
 
-// ===================== ОТРИСОВКА =====================
+// ===================== РЕНДЕР =====================
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (gameState === 'playing' || gameState === 'gameover') {
-    // Платформы
     platforms.forEach(p => {
+      ctx.save();
       ctx.globalAlpha = p.opacity;
       let color = '#ff5fa0';
       if (p.type === PT.LIFT) color = '#4facfe';
       if (p.type === PT.FRAGILE) color = '#a18cd1';
       if (p.type === PT.LOOSE) color = '#f093fb';
-      if (p.type === PT.STAR) color = '#ffd700';
+      if (p.type === PT.STAR) color = p.used ? '#555' : '#ffd700';
 
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8);
       ctx.fill();
       
-      if (p.type === PT.STAR) {
+      if (p.type === PT.STAR && !p.used) {
         ctx.fillStyle = '#fff';
-        ctx.font = '12px serif';
+        ctx.font = 'bold 12px Nunito';
         ctx.fillText('⭐', p.x + PLAT_W/2 - 6, p.y - cameraY + 12);
       }
-      ctx.globalAlpha = 1;
+      ctx.restore();
     });
 
-    // Бустеры
     boosts.forEach(b => {
       if (!b.active) return;
-      let emoji = '🌀';
-      if (b.type === BT.ROCKET) emoji = '🚀';
-      if (b.type === BT.MAGNET) emoji = '🧲';
-      ctx.font = '24px serif';
-      ctx.fillText(emoji, b.x, b.y - cameraY + 20);
+      let emoji = (b.type === BT.SPRING) ? '🌀' : (b.type === BT.ROCKET ? '🚀' : '🧲');
+      ctx.font = '26px serif';
+      ctx.fillText(emoji, b.x, b.y - cameraY + 22);
     });
 
-    // Игрок
     const skin = SKINS.find(s => s.id === currentSkin);
     if (skin.type === 'emoji') {
-      ctx.font = '40px serif';
+      ctx.font = '42px serif';
       ctx.textAlign = 'center';
       ctx.fillText(skin.char, player.x + player.w/2, player.y - cameraY + 35);
     } else {
       ctx.save();
       ctx.beginPath();
-      ctx.arc(player.x + player.w/2, player.y - cameraY + player.h/2, 20, 0, Math.PI*2);
+      ctx.arc(player.x + player.w/2, player.y - cameraY + player.h/2, 22, 0, Math.PI*2);
       ctx.clip();
-      ctx.drawImage(vikaImg, player.x, player.y - cameraY, 40, 40);
+      ctx.drawImage(vikaImg, player.x - 2, player.y - cameraY - 2, 44, 44);
       ctx.restore();
     }
     
     if (rocketTimer > 0) {
-        ctx.font = '20px serif';
-        ctx.fillText('🔥', player.x + player.w/2, player.y - cameraY + 60);
+        ctx.font = '24px serif';
+        ctx.fillText('🔥', player.x + player.w/2 - 12, player.y - cameraY + 65);
     }
+
+    floatingTexts.forEach(t => {
+      ctx.globalAlpha = t.life;
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 22px Nunito';
+      ctx.fillText(t.text, t.x - 20, t.y - cameraY);
+    });
   }
 
   requestAnimationFrame(draw);
 }
 
-// ===================== UI И ДОСТИЖЕНИЯ =====================
+// ===================== UI =====================
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   if (id !== 'none') document.getElementById(id).style.display = 'flex';
-  
   if (id === 'skins-screen') renderSkins();
   if (id === 'ach-screen') renderAchievements();
 }
@@ -540,12 +533,20 @@ function renderSkins() {
     
     const div = document.createElement('div');
     div.className = `skin-item ${locked ? 'locked' : ''} ${currentSkin === s.id ? 'selected' : ''}`;
+    
+    let displayName = locked ? "???" : s.title;
+    let displayIcon = locked ? "🔒" : (s.type === 'emoji' ? s.char : '🖼️');
+
     div.innerHTML = `
-      <div class="skin-icon">${s.type === 'emoji' ? s.char : '🖼️'}</div>
-      <div style="font-size:0.8rem; font-weight:bold">${s.title}</div>
-      <div class="skin-price">${locked ? 'закрыто' : 'выбрано'}</div>
+      <div class="skin-icon">${displayIcon}</div>
+      <div class="skin-title">${displayName}</div>
+      <div class="skin-price">${locked ? 'закрыто' : 'получено'}</div>
     `;
-    if (!locked) div.onclick = () => { currentSkin = s.id; localStorage.setItem('hj_skin', s.id); renderSkins(); };
+    if (!locked) div.onclick = () => { 
+      currentSkin = s.id; 
+      localStorage.setItem('hj_skin', s.id); 
+      renderSkins(); 
+    };
     container.appendChild(div);
   });
 }
@@ -560,8 +561,8 @@ function renderAchievements() {
     div.innerHTML = `
       <div class="ach-icon">${unlocked ? a.icon : '❓'}</div>
       <div class="ach-info">
-        <b>${a.title}</b>
-        <span>${unlocked ? a.desc : 'Нужно постараться...'}</span>
+        <b>${unlocked ? a.title : '???'}</b>
+        <span>${unlocked ? a.desc : 'Секретное достижение'}</span>
       </div>
     `;
     container.appendChild(div);
@@ -571,12 +572,9 @@ function renderAchievements() {
 function checkAchievements() {
   ACHIEVEMENTS.forEach(a => {
     if (unlockedAchs.includes(a.id)) return;
-    
     let pass = false;
-    if (a.type === 'best' && bestScore >= a.req) pass = true;
+    if (a.type === 'best' && score >= a.req) pass = true;
     if (a.type === 'total' && totalScore >= a.req) pass = true;
-    if (a.type === 'games' && gamesPlayed >= a.req) pass = true;
-    
     if (pass) {
       unlockedAchs.push(a.id);
       localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
@@ -587,19 +585,13 @@ function checkAchievements() {
 
 function showToast(a) {
   const toast = document.getElementById('ach-toast');
-  toast.innerHTML = `<b>Достижение! ${a.icon}</b><br>${a.title}`;
+  toast.innerHTML = `<b>Новое достижение! ${a.icon}</b><br>${a.title}`;
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3000);
+  setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-function createBurst(x, y, color) {
-  // Простая анимация частиц (по желанию можно расширить)
-}
-
-// Запуск
 setInterval(update, 1000/60);
 draw();
-
 </script>
 </body>
 </html>
