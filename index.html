@@ -41,10 +41,10 @@ body {
   overflow: hidden;
   background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%);
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
-  display: flex; /* По умолчанию на мобильных показываем игру */
+  display: flex;
 }
 
-/* Логика скрытия/показа экрана в зависимости от устройства */
+/* Исправленная логика отображения экранов */
 @media (min-width: 650px) {
   #game-wrapper { display: none !important; }
   #desktop-msg { display: flex !important; }
@@ -71,7 +71,7 @@ canvas { display: block; width: 100%; height: 100%; }
   z-index: 10;
 }
 
-/* Экраны (Меню, Скины и т.д.) */
+/* Экраны */
 .screen {
   position: absolute;
   inset: 0;
@@ -156,7 +156,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 .ach-info b { display: block; font-size: 0.9rem; color: #ffcce6; }
 .ach-info span { font-size: 0.75rem; color: #ff9ec8; opacity: 0.8; }
 
-/* Всплывашка достижений */
+/* Тост */
 #ach-toast {
   position: absolute;
   top: 80px;
@@ -192,7 +192,6 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Главное меню -->
   <div class="screen" id="menu-screen">
     <h1>Heart Jump</h1>
     <div class="subtitle">самой лучшей девочке во вселенной 💕</div>
@@ -201,21 +200,18 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
     <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
   </div>
 
-  <!-- Экран скинов -->
   <div class="screen" id="skins-screen" style="display:none">
     <h1>Твои образы</h1>
     <div class="skins-grid" id="skins-grid"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Экран достижений -->
   <div class="screen" id="ach-screen" style="display:none">
     <h1>Достижения</h1>
     <div class="ach-list" id="ach-list"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Экран проигрыша -->
   <div class="screen" id="gameover-screen" style="display:none">
     <h1 id="go-title">Не расстраивайся!</h1>
     <div class="subtitle" id="go-score-msg">Ты умничка!</div>
@@ -227,7 +223,7 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 </div>
 
 <script>
-// ===================== НАСТРОЙКИ И ДАННЫЕ =====================
+// ===================== ДАННЫЕ =====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -250,12 +246,10 @@ const SKINS = [
 ];
 
 const ACHIEVEMENTS = [
-  // За один полет
   { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
   { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
   { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
   { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
-  // Накопительные
   { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
   { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
   { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
@@ -277,7 +271,10 @@ const COMPLIMENTS = [
 ];
 
 // СОСТОЯНИЕ
-let score = 0;
+let score = 0; // Итоговый счет (Высота + Бонусы)
+let currentHeightScore = 0; // Только высота
+let bonusScore = 0; // Только бонусы (звезды)
+
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
 let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
@@ -290,7 +287,7 @@ let tilt = 0;
 let rocketTimer = 0, magnetTimer = 0;
 let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== ОСНОВНАЯ ЛОГИКА =====================
+// ===================== ЛОГИКА =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -304,6 +301,8 @@ window.addEventListener('deviceorientation', e => {
 
 function startGame() {
   score = 0;
+  currentHeightScore = 0;
+  bonusScore = 0;
   cameraY = 0;
   rocketTimer = 0;
   magnetTimer = 0;
@@ -318,7 +317,6 @@ function startGame() {
     vx: 0, vy: JUMP_FORCE
   };
 
-  // Опора в начале
   platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1, side: 0, speed: 0 });
 
   for (let i = 0; i < 15; i++) {
@@ -336,7 +334,7 @@ function spawnPlatform(y) {
   let type = PT.NORMAL;
   const roll = Math.random();
 
-  if (score > 100) {
+  if (currentHeightScore > 100) {
     if (roll < 0.2) type = PT.LIFT;
     else if (roll < 0.35) type = PT.FRAGILE;
     else if (roll < 0.45) type = PT.LOOSE;
@@ -350,7 +348,7 @@ function spawnPlatform(y) {
   };
   platforms.push(newPlat);
 
-  if (score > 50 && Math.random() < 0.1) {
+  if (currentHeightScore > 50 && Math.random() < 0.1) {
     boosts.push({ 
       parent: newPlat, offX: PLAT_W/2 - 12, offY: -25, 
       type: Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET), 
@@ -376,12 +374,15 @@ function update() {
     cameraY = player.y - canvas.height * 0.45;
   }
 
-  let currentHeight = Math.floor(Math.abs(cameraY) / 15);
-  if (currentHeight > score) {
-    score = currentHeight;
-    updateHUD();
-    checkAchievements();
+  // РАСЧЕТ ОЧКОВ: Исправлено, чтобы бонусы не мешали высоте
+  let h = Math.floor(Math.abs(cameraY) / 15);
+  if (h > currentHeightScore) {
+    currentHeightScore = h;
   }
+  
+  score = currentHeightScore + bonusScore;
+  updateHUD();
+  checkAchievements();
 
   platforms.forEach(p => {
     if (p.type === PT.LIFT) {
@@ -402,7 +403,7 @@ function update() {
 
       if (p.type === PT.STAR && !p.used) {
         p.used = true;
-        addScoreEffect(50, p.x + PLAT_W/2, p.y);
+        addBonus(50, p.x + PLAT_W/2, p.y);
       } else {
         p.used = true;
       }
@@ -436,8 +437,9 @@ function update() {
   if (player.y - cameraY > canvas.height + 100) endGame();
 }
 
-function addScoreEffect(pts, x, y) {
-  score += pts;
+function addBonus(pts, x, y) {
+  bonusScore += pts;
+  score = currentHeightScore + bonusScore;
   updateHUD();
   floatingTexts.push({ x, y, text: `+${pts} 💕`, life: 1 });
 }
@@ -458,12 +460,11 @@ function endGame() {
   showScreen('gameover-screen');
 }
 
-// ===================== ОТРИСОВКА =====================
+// ===================== РЕНДЕР =====================
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (gameState === 'playing' || gameState === 'gameover') {
-    // Платформы
     platforms.forEach(p => {
       ctx.save();
       ctx.globalAlpha = p.opacity;
@@ -484,7 +485,6 @@ function draw() {
       ctx.restore();
     });
 
-    // Бустеры
     boosts.forEach(b => {
       if (!b.active) return;
       ctx.globalAlpha = 1.0; 
@@ -493,7 +493,6 @@ function draw() {
       ctx.fillText(emoji, b.x, b.y - cameraY + 22);
     });
 
-    // Сброс прозрачности для персонажа (ВАЖНО!)
     ctx.globalAlpha = 1.0;
     const skin = SKINS.find(s => s.id === currentSkin);
     
