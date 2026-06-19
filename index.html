@@ -17,17 +17,8 @@ body {
   align-items: center;
   min-height: 100vh;
   overflow: hidden;
+  color: #fff;
 }
-
-#desktop-msg {
-  display: none;
-  color: #ffb3d9;
-  font-size: 1.4rem;
-  text-align: center;
-  padding: 2rem;
-  max-width: 400px;
-}
-#desktop-msg .big { font-size: 3rem; }
 
 #game-wrapper {
   position: relative;
@@ -36,39 +27,28 @@ body {
   max-width: 430px;
   overflow: hidden;
   background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%);
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
 }
 
-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
+canvas { display: block; width: 100%; height: 100%; }
 
 /* HUD */
 #hud {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  color: #ffcce6;
-  font-size: 1.1rem;
-  font-weight: 700;
-  text-shadow: 0 0 8px #ff69b4aa;
-  pointer-events: none;
+  top: 15px;
+  left: 15px;
   z-index: 10;
+  pointer-events: none;
 }
-#score-label { font-size: 0.7rem; opacity: 0.7; letter-spacing: 1px; text-transform: uppercase; }
-#score-val { font-size: 1.6rem; font-weight: 900; }
+#score-val { font-size: 2rem; font-weight: 900; color: #ffcce6; text-shadow: 0 0 10px #ff69b4; }
+#total-val { font-size: 0.8rem; opacity: 0.8; color: #ff9ec8; }
 
-/* Active boost indicator */
 #boost-hud {
   position: absolute;
-  top: 12px;
-  right: 14px;
-  color: #fff;
-  font-size: 1.4rem;
-  pointer-events: none;
+  top: 15px;
+  right: 15px;
+  font-size: 2rem;
   z-index: 10;
-  text-shadow: 0 0 10px #ff69b4;
 }
 
 /* Screens */
@@ -80,168 +60,103 @@ canvas {
   align-items: center;
   justify-content: center;
   z-index: 20;
-  background: linear-gradient(180deg, #1a001088 0%, #3d003099 100%);
-  backdrop-filter: blur(4px);
+  background: rgba(26, 0, 16, 0.85);
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  text-align: center;
 }
 
-.screen h1 {
-  font-size: 2.4rem;
-  font-weight: 900;
-  color: #ffcce6;
-  text-shadow: 0 0 20px #ff69b4;
-  margin-bottom: 0.2rem;
-}
-.screen .subtitle {
-  color: #ff9ec8;
-  font-size: 0.95rem;
-  margin-bottom: 2.5rem;
-  opacity: 0.8;
-}
+h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bottom: 10px; }
+.subtitle { color: #ff9ec8; margin-bottom: 30px; font-size: 1rem; }
 
 .btn {
   background: linear-gradient(135deg, #ff5fa0, #e0105a);
   color: #fff;
-  font-family: 'Nunito', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
   border: none;
   border-radius: 50px;
-  padding: 0.75rem 2.4rem;
-  margin: 0.45rem;
+  padding: 12px 35px;
+  margin: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 18px #e0105a66;
-  transition: transform 0.1s, box-shadow 0.1s;
-  min-width: 200px;
-  text-align: center;
-  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(224, 16, 90, 0.4);
+  width: 220px;
+  transition: transform 0.1s;
 }
-.btn:active { transform: scale(0.96); box-shadow: 0 2px 8px #e0105a44; }
-.btn.secondary {
-  background: transparent;
-  border: 2px solid #ff5fa0;
-  color: #ff9ec8;
-  box-shadow: none;
-}
+.btn:active { transform: scale(0.95); }
+.btn.secondary { background: transparent; border: 2px solid #ff5fa0; color: #ff9ec8; box-shadow: none; }
 
-/* Achievements */
-#ach-screen {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 3.5rem;
-  overflow-y: auto;
+/* Skins Grid */
+.skins-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+  width: 100%;
+  max-width: 320px;
 }
-#ach-screen h2 {
-  font-size: 1.8rem;
-  color: #ffcce6;
-  font-weight: 900;
-  margin-bottom: 1.5rem;
-  text-shadow: 0 0 15px #ff69b4;
-}
-.ach-list {
-  width: 88%;
-  max-width: 340px;
+.skin-item {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  border-radius: 15px;
+  padding: 15px;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  transition: 0.2s;
+}
+.skin-item.locked { opacity: 0.4; filter: grayscale(1); }
+.skin-item.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
+.skin-icon { font-size: 1.8rem; margin-bottom: 5px; }
+.skin-price { font-size: 0.65rem; color: #ff9ec8; }
+
+/* Achievements List */
+.ach-list {
+  width: 100%;
+  max-height: 350px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding-right: 5px;
 }
 .ach-item {
-  background: #ffffff11;
-  border: 1.5px solid #ff5fa055;
-  border-radius: 16px;
-  padding: 0.8rem 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
-  gap: 0.9rem;
-  transition: background 0.3s;
+  gap: 15px;
+  text-align: left;
+  border-left: 4px solid #555;
 }
-.ach-item.unlocked {
-  background: #ff5fa022;
-  border-color: #ff5fa0;
-  box-shadow: 0 0 10px #ff5fa033;
-}
-.ach-icon { font-size: 1.8rem; }
-.ach-info .ach-title { color: #ffcce6; font-weight: 700; font-size: 0.95rem; }
-.ach-info .ach-desc { color: #ff9ec899; font-size: 0.78rem; margin-top: 0.1rem; }
-.ach-item.locked .ach-icon { filter: grayscale(1); opacity: 0.4; }
-.ach-item.locked .ach-info .ach-title { opacity: 0.4; }
+.ach-item.unlocked { border-left-color: #ff5fa0; background: rgba(255, 95, 160, 0.1); }
+.ach-icon { font-size: 1.5rem; }
+.ach-info b { display: block; font-size: 0.9rem; color: #ffcce6; }
+.ach-info span { font-size: 0.75rem; color: #ff9ec8; opacity: 0.8; }
 
-/* Toast achievement popup */
+/* Toast Achievement */
 #ach-toast {
   position: absolute;
-  bottom: 80px;
+  top: 100px;
   left: 50%;
-  transform: translateX(-50%) translateY(30px);
-  background: linear-gradient(135deg, #ff5fa0dd, #e0105add);
-  color: #fff;
-  font-family: 'Nunito', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.8rem 1.4rem;
-  border-radius: 20px;
-  text-align: center;
-  max-width: 80vw;
-  z-index: 30;
+  transform: translateX(-50%) translateY(-20px);
+  background: linear-gradient(135deg, #ff5fa0, #e0105a);
+  padding: 12px 20px;
+  border-radius: 15px;
+  z-index: 100;
   opacity: 0;
-  transition: opacity 0.4s, transform 0.4s;
+  transition: 0.5s;
   pointer-events: none;
-  box-shadow: 0 4px 20px #e0105a88;
-}
-#ach-toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Game over */
-#gameover-screen .final-score {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #ff5fa0;
-  text-shadow: 0 0 20px #ff5fa0;
-  margin-bottom: 0.2rem;
-}
-#gameover-screen .go-label {
-  color: #ff9ec8;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-  opacity: 0.7;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-#gameover-screen .best-score {
-  color: #ffcce6;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-  opacity: 0.8;
-}
-
-/* Tilt indicator */
-#tilt-hint {
-  position: absolute;
-  bottom: 18px;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #ff9ec855;
-  font-size: 0.75rem;
-  pointer-events: none;
-  z-index: 10;
+  width: 80%;
   text-align: center;
-  letter-spacing: 0.5px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
+#ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* Particle canvas overlay */
-#particle-canvas {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 15;
-}
+#desktop-msg { display: none; text-align: center; padding: 20px; color: #ffcce6; }
 
 @media (min-width: 600px) and (min-height: 600px) {
-  /* Show desktop message, hide game */
-  body { background: #1a0010; }
   #game-wrapper { display: none; }
   #desktop-msg { display: block; }
 }
@@ -250,676 +165,441 @@ canvas {
 <body>
 
 <div id="desktop-msg">
-  <div class="big">📱💕</div>
-  <p>Эта игра создана для телефона.<br>Открой её на смартфоне!</p>
+  <h1>📱💕</h1>
+  <p>Эта игра создана для телефона.<br>Пожалуйста, открой её на смартфоне, чтобы играть наклонами!</p>
 </div>
 
 <div id="game-wrapper">
-  <!-- HUD -->
-  <div id="hud">
-    <div id="score-label">счёт</div>
+  <div id="hud" style="display:none">
     <div id="score-val">0</div>
+    <div id="total-val">всего: 0</div>
   </div>
-  <div id="boost-hud" id="boost-hud"></div>
+  <div id="boost-hud"></div>
 
-  <!-- Main canvas -->
   <canvas id="gameCanvas"></canvas>
-  <!-- Particle overlay -->
-  <canvas id="particle-canvas"></canvas>
 
-  <!-- Menu screen -->
+  <!-- Главное меню -->
   <div class="screen" id="menu-screen">
-    <h1>💕 Heart Jump</h1>
-    <div class="subtitle">наклоняй телефон, чтобы лететь</div>
+    <h1>Heart Jump</h1>
+    <div class="subtitle">для самой любимой девочки 💕</div>
     <button class="btn" onclick="startGame()">Новая игра</button>
-    <button class="btn secondary" onclick="showAchievements()">Достижения</button>
+    <button class="btn secondary" onclick="showScreen('skins-screen')">Скины</button>
+    <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
   </div>
 
-  <!-- Achievements screen -->
-  <div class="screen" id="ach-screen">
-    <h2>🏆 Достижения</h2>
+  <!-- Скины -->
+  <div class="screen" id="skins-screen" style="display:none">
+    <h1>Выбери образ</h1>
+    <div class="skins-grid" id="skins-grid"></div>
+    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
+  </div>
+
+  <!-- Достижения -->
+  <div class="screen" id="ach-screen" style="display:none">
+    <h1>Твои успехи</h1>
     <div class="ach-list" id="ach-list"></div>
-    <button class="btn secondary" onclick="hideAchievements()">← Назад</button>
+    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Game over screen -->
+  <!-- Конец игры -->
   <div class="screen" id="gameover-screen" style="display:none">
-    <h1>💔 Упали!</h1>
-    <div class="go-label">итог</div>
-    <div class="final-score" id="final-score">0</div>
-    <div class="best-score" id="best-score-label"></div>
-    <button class="btn" onclick="startGame()">Ещё раз</button>
-    <button class="btn secondary" onclick="showMenu()">Меню</button>
+    <h1 id="go-title">Упс! 💔</h1>
+    <div class="subtitle" id="go-score-msg">Ты пролетела 0 метров</div>
+    <button class="btn" onclick="startGame()">Еще раз</button>
+    <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
   </div>
 
-  <!-- Achievement toast -->
   <div id="ach-toast"></div>
-  <div id="tilt-hint">↔ наклоняй телефон</div>
 </div>
 
 <script>
-// ===================== CONSTANTS =====================
-const W = () => canvas.width;
-const H = () => canvas.height;
+// ===================== НАСТРОЙКИ И ДАННЫЕ =====================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-const PLAT_W = 70;
-const PLAT_H = 14;
-const GRAVITY = 0.38;
-const JUMP_FORCE = -13;
-const SPRING_FORCE = -19;
-const ROCKET_DURATION = 1800; // ms
-const MAGNET_DURATION = 2000;
-const SCROLL_SPEED_BASE = 3;
+const PLAT_W = 75;
+const PLAT_H = 15;
+const GRAVITY = 0.35;
+const JUMP_FORCE = -11;
+const SPRING_FORCE = -18;
 
-// Platform types
-const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, BOMB: 4, STAR: 5 };
-// Boost types
+// Типы платформ
+const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, STAR: 4 };
+// Типы бустеров
 const BT = { SPRING: 0, ROCKET: 1, MAGNET: 2 };
 
-// Achievements
-const ACHIEVEMENTS = [
-  { id: 'a100',  score: 100,  icon: '🌸', title: '100 очков',   compliment: 'Ты такая нежная, как лепестки сакуры 🌸' },
-  { id: 'a200',  score: 200,  icon: '🌙', title: '200 очков',   compliment: 'Ты мой лунный свет в тёмную ночь 🌙' },
-  { id: 'a500',  score: 500,  icon: '💫', title: '500 очков',   compliment: 'Ты ярче всех звёзд на небе, любимая 💫' },
-  { id: 'a1000', score: 1000, icon: '👑', title: '1000 очков',  compliment: 'Ты моя королева, и я в тебя безумно влюблён 👑' },
-  { id: 'a_first', score: 0, icon: '❤️',  title: 'Первый прыжок', compliment: 'Даже первый шаг ты делаешь красиво ❤️', special: 'first_jump' },
-  { id: 'a_lucky', score: 0, icon: '🍀', title: 'Везунчик',    compliment: 'Ты моя удача и счастье 🍀', special: 'lucky' },
+// Скины
+const SKINS = [
+  { id: 'red', char: '❤️', title: 'Классика', type: 'emoji', req: 0 },
+  { id: 'pink', char: '💕', title: 'Нежность', type: 'emoji', req: 500, reqType: 'best' },
+  { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 5000, reqType: 'total' },
+  { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 15000, reqType: 'total' },
+  { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 50000, reqType: 'total' },
+  { id: 'vika', char: 'vika.png', title: 'Моя Вика', type: 'image', req: 1000000, reqType: 'total' }
 ];
 
-// ===================== STATE =====================
-let canvas, ctx, pCanvas, pCtx;
-let gameState = 'menu'; // menu | playing | gameover
-let score = 0, bestScore = 0;
-let unlockedAchs = new Set(JSON.parse(localStorage.getItem('hj_achs') || '[]'));
-let bestScoreStored = parseInt(localStorage.getItem('hj_best') || '0');
-bestScore = bestScoreStored;
+// Достижения
+const ACHIEVEMENTS = [
+  { id: 'first', icon: '💝', title: 'Начало пути', desc: 'Сделать первый прыжок', req: 1, type: 'games' },
+  { id: 'm100', icon: '🌸', title: 'Цветочек', desc: 'Набрать 100 метров', req: 100, type: 'best' },
+  { id: 'm500', icon: '✨', title: 'Сияние', desc: 'Набрать 500 метров', req: 500, type: 'best' },
+  { id: 'm1000', icon: '🌙', title: 'Лунная призма', desc: 'Набрать 1000 метров', req: 1000, type: 'best' },
+  { id: 'sum10k', icon: '🍭', title: 'Сладкоежка', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
+  { id: 'sum100k', icon: '🔥', title: 'Неудержимая', desc: '100,000 очков в сумме', req: 100000, type: 'total' },
+  { id: 'sum1m', icon: '💎', title: 'Моя Вселенная', desc: 'Собрать 1,000,000 очков', req: 1000000, type: 'total' },
+];
 
-let player, platforms, boosts, particles;
+// Состояние
+let score = 0;
+let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
+let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
+let gamesPlayed = parseInt(localStorage.getItem('hj_games') || '0');
+let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
+let currentSkin = localStorage.getItem('hj_skin') || 'red';
+
+let gameState = 'menu';
 let cameraY = 0;
-let rocketActive = false, rocketTimer = 0;
-let magnetActive = false, magnetTimer = 0;
-let tilt = 0; // -1..1
-let lastTime = 0;
-let firstJumpDone = false;
-let luckyPlatformCount = 0;
+let player, platforms, boosts, particles;
+let tilt = 0;
+let rocketTimer = 0, magnetTimer = 0;
+let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== SETUP =====================
-window.addEventListener('load', () => {
-  canvas = document.getElementById('gameCanvas');
-  ctx = canvas.getContext('2d');
-  pCanvas = document.getElementById('particle-canvas');
-  pCtx = pCanvas.getContext('2d');
-  resize();
-  window.addEventListener('resize', resize);
+// ===================== ИНИЦИАЛИЗАЦИЯ =====================
+function resize() {
+  canvas.width = Math.min(window.innerWidth, 430);
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-  // Tilt control
-  window.addEventListener('deviceorientation', e => {
-    if (e.gamma !== null) {
-      tilt = Math.max(-1, Math.min(1, e.gamma / 30));
-    }
-  });
-
-  // Touch fallback: drag left/right
-  let touchStartX = null;
-  pCanvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  pCanvas.addEventListener('touchmove', e => {
-    if (touchStartX !== null) {
-      const dx = (e.touches[0].clientX - touchStartX) / (canvas.clientWidth * 0.35);
-      tilt = Math.max(-1, Math.min(1, dx));
-    }
-  }, { passive: true });
-  pCanvas.addEventListener('touchend', () => { tilt *= 0.5; });
-
-  // Request device motion permission on iOS
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    document.getElementById('menu-screen').querySelector('button').addEventListener('click', () => {
-      DeviceOrientationEvent.requestPermission().catch(() => {});
-    }, { once: true });
-  }
-
-  renderAchievements();
-  requestAnimationFrame(loop);
+// Управление наклоном
+window.addEventListener('deviceorientation', e => {
+  if (e.gamma !== null) tilt = Math.max(-1, Math.min(1, e.gamma / 25));
 });
 
-function resize() {
-  canvas.width = window.innerWidth > 430 ? 430 : window.innerWidth;
-  canvas.height = window.innerHeight;
-  pCanvas.width = canvas.width;
-  pCanvas.height = canvas.height;
-}
+// Клик для старта (фиктивно для iOS)
+document.addEventListener('touchstart', () => {
+  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission();
+  }
+}, { once: true });
 
-// ===================== GAME INIT =====================
+// ===================== ЛОГИКА ИГРЫ =====================
 function startGame() {
   score = 0;
   cameraY = 0;
-  rocketActive = false; magnetActive = false;
-  firstJumpDone = false;
-  luckyPlatformCount = 0;
-  tilt = 0;
-
+  rocketTimer = 0;
+  magnetTimer = 0;
   platforms = [];
   boosts = [];
   particles = [];
-
-  // Starting platform under player
-  platforms.push(makePlatform(W()/2 - PLAT_W/2, H() - 120, PT.NORMAL));
-
-  // Generate initial platforms
-  for (let y = H() - 200; y > -H() * 3; y -= randomPlatGap()) {
-    addRandomPlatform(y);
-  }
-
+  
+  // Игрок
   player = {
-    x: W()/2 - 16,
-    y: H() - 160,
-    w: 32, h: 28,
-    vx: 0, vy: 0,
-    onGround: false,
+    x: canvas.width / 2 - 20,
+    y: canvas.height - 150,
+    w: 40, h: 40,
+    vx: 0, vy: JUMP_FORCE
   };
-  player.vy = JUMP_FORCE;
 
-  document.getElementById('menu-screen').style.display = 'none';
-  document.getElementById('gameover-screen').style.display = 'none';
-  document.getElementById('ach-screen').style.display = 'none';
-  document.getElementById('hud').style.display = 'block';
-  document.getElementById('tilt-hint').style.display = 'block';
+  // Начальная платформа
+  platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1 });
+
+  // Генерация первых платформ
+  for (let i = 0; i < 15; i++) {
+    spawnPlatform(canvas.height - 200 - (i * 80));
+  }
+
+  gamesPlayed++;
+  localStorage.setItem('hj_games', gamesPlayed);
+  checkAchievements();
+
   gameState = 'playing';
-  updateScoreHUD();
+  showScreen('none');
+  document.getElementById('hud').style.display = 'block';
+  updateHUD();
 }
 
-function showMenu() {
-  gameState = 'menu';
-  document.getElementById('menu-screen').style.display = 'flex';
-  document.getElementById('gameover-screen').style.display = 'none';
-  document.getElementById('hud').style.display = 'none';
-  document.getElementById('tilt-hint').style.display = 'none';
-}
-
-function showAchievements() {
-  document.getElementById('menu-screen').style.display = 'none';
-  document.getElementById('ach-screen').style.display = 'flex';
-  renderAchievements();
-}
-
-function hideAchievements() {
-  document.getElementById('ach-screen').style.display = 'none';
-  document.getElementById('menu-screen').style.display = 'flex';
-}
-
-function gameOver() {
-  gameState = 'gameover';
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('hj_best', bestScore);
-  }
-  document.getElementById('final-score').textContent = score;
-  document.getElementById('best-score-label').textContent = bestScore > 0 ? `Рекорд: ${bestScore}` : '';
-  document.getElementById('gameover-screen').style.display = 'flex';
-  document.getElementById('hud').style.display = 'none';
-  spawnHeartBurst(W()/2, H()/2, 20);
-}
-
-// ===================== PLATFORM HELPERS =====================
-function randomPlatGap() { return 80 + Math.random() * 60; }
-
-function makePlatform(x, y, type) {
-  const p = { x, y, w: PLAT_W, h: PLAT_H, type, used: false, opacity: 1 };
-  if (type === PT.LIFT) {
-    p.liftDir = Math.random() < 0.5 ? 1 : -1;
-    p.liftMin = Math.max(10, x - 60);
-    p.liftMax = Math.min(W() - PLAT_W - 10, x + 60);
-    p.liftSpeed = 1.2 + Math.random();
-  }
-  if (type === PT.BOMB) {
-    p.bombTimer = 0;
-    p.blinking = false;
-  }
-  if (type === PT.STAR) {
-    p.scored = false;
-  }
-  return p;
-}
-
-function addRandomPlatform(y) {
-  const x = 15 + Math.random() * (W() - PLAT_W - 30);
+function spawnPlatform(y) {
+  const x = Math.random() * (canvas.width - PLAT_W - 20) + 10;
+  let type = PT.NORMAL;
   const roll = Math.random();
-  let type;
-  // Weights based on height (harder as score rises)
-  const hardness = Math.min(score / 500, 1);
-  if      (roll < 0.35)                    type = PT.NORMAL;
-  else if (roll < 0.35 + 0.18)            type = PT.LOOSE;
-  else if (roll < 0.35 + 0.18 + 0.18)     type = PT.FRAGILE;
-  else if (roll < 0.35 + 0.18 + 0.18 + 0.12) type = PT.LIFT;
-  else if (roll < 0.35 + 0.18 + 0.18 + 0.12 + 0.08 * hardness) type = PT.BOMB;
-  else if (roll < 0.80 + 0.1)             type = PT.STAR;
-  else                                     type = PT.NORMAL;
 
-  const plat = makePlatform(x, y, type);
-  platforms.push(plat);
+  if (score > 200) {
+    if (roll < 0.15) type = PT.LIFT;
+    else if (roll < 0.3) type = PT.FRAGILE;
+    else if (roll < 0.4) type = PT.LOOSE;
+  }
+  if (Math.random() < 0.05) type = PT.STAR;
 
-  // Maybe add a boost on top
-  if (type !== PT.FRAGILE && type !== PT.BOMB && Math.random() < 0.18) {
-    const bRoll = Math.random();
-    let bType = bRoll < 0.55 ? BT.SPRING : bRoll < 0.80 ? BT.ROCKET : BT.MAGNET;
-    boosts.push({ x: x + PLAT_W/2 - 10, y: y - 22, type: bType, collected: false });
+  platforms.push({ x, y, type, used: false, opacity: 1, 
+    side: Math.random() < 0.5 ? 1 : -1, 
+    origX: x 
+  });
+
+  // Бустеры (не сразу)
+  if (score > 100 && Math.random() < 0.08) {
+    const bType = Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET);
+    boosts.push({ x: x + PLAT_W / 2 - 10, y: y - 25, type: bType, active: true });
   }
 }
 
-// ===================== MAIN LOOP =====================
-function loop(ts) {
-  const dt = Math.min(ts - lastTime, 50);
-  lastTime = ts;
+function update() {
+  if (gameState !== 'playing') return;
 
-  if (gameState === 'playing') update(dt);
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// ===================== UPDATE =====================
-function update(dt) {
-  // Tilt → velocity
-  player.vx += tilt * 1.1;
-  player.vx *= 0.82;
-
-  // Rocket overrides gravity
-  if (rocketActive) {
-    rocketTimer -= dt;
-    player.vy = -11;
-    player.vx = tilt * 5;
-    if (rocketTimer <= 0) rocketActive = false;
-    document.getElementById('boost-hud').textContent = rocketActive ? '🚀' : (magnetActive ? '🧲' : '');
-  } else {
-    player.vy += GRAVITY;
-  }
-
-  if (magnetActive) {
-    magnetTimer -= dt;
-    // Pull closest platform horizontally toward player centre
-    let closest = null, minD = 999;
-    for (const p of platforms) {
-      const d = Math.abs((p.y - cameraY) - (player.y - cameraY));
-      if (d > 0 && d < 200 && d < minD) { minD = d; closest = p; }
-    }
-    if (closest) {
-      const cx = player.x + player.w/2 - PLAT_W/2;
-      closest.x += (cx - closest.x) * 0.07;
-    }
-    if (magnetTimer <= 0) magnetActive = false;
-    document.getElementById('boost-hud').textContent = magnetActive ? '🧲' : '';
+  // Движение
+  player.vx = tilt * 8;
+  if (!rocketTimer) player.vy += GRAVITY;
+  else {
+    player.vy = -10;
+    rocketTimer--;
   }
 
   player.x += player.vx;
   player.y += player.vy;
 
-  // Wrap horizontally
-  if (player.x + player.w < 0) player.x = W();
-  if (player.x > W()) player.x = -player.w;
-
-  // Camera scroll
-  const midY = H() * 0.4;
-  if (player.y < midY + cameraY) {
-    const diff = (midY + cameraY) - player.y;
-    cameraY -= diff;
-    score = Math.max(score, Math.round(-cameraY / 4));
-    updateScoreHUD();
-    checkAchievements();
+  // Магнит
+  if (magnetTimer > 0) {
+    magnetTimer--;
+    boosts.forEach(b => {
+      if (b.active && Math.abs(b.y - player.y) < 300) {
+        b.x += (player.x - b.x) * 0.1;
+        b.y += (player.y - b.y) * 0.1;
+      }
+    });
   }
 
-  // Platform collision (only falling)
-  if (player.vy > 0 && !rocketActive) {
-    for (const p of platforms) {
-      const px = p.x, py = p.y - cameraY;
-      if (
-        player.x + player.w > px + 6 &&
-        player.x < px + p.w - 6 &&
-        player.y + player.h > py &&
-        player.y + player.h < py + p.h + player.vy + 2 &&
-        p.opacity > 0.1
-      ) {
-        handleLand(p);
-        break;
+  // Сквозной экран
+  if (player.x > canvas.width) player.x = -player.w;
+  if (player.x < -player.w) player.x = canvas.width;
+
+  // Камера
+  if (player.y < cameraY + canvas.height * 0.4) {
+    cameraY = player.y - canvas.height * 0.4;
+  }
+
+  // Очки (высота)
+  let currentHeight = Math.floor(Math.abs(cameraY) / 10);
+  if (currentHeight > score) {
+    score = currentHeight;
+    updateHUD();
+  }
+
+  // Платформы
+  platforms.forEach(p => {
+    // Коллизия (только если падаем вниз)
+    if (player.vy > 0 && 
+        player.x + 10 < p.x + PLAT_W && 
+        player.x + player.w - 10 > p.x && 
+        player.y + player.h > p.y && 
+        player.y + player.h < p.y + PLAT_H + player.vy + 2) {
+      
+      if (p.opacity > 0.5) {
+        if (p.type === PT.LOOSE) { p.used = true; player.vy = JUMP_FORCE; }
+        else if (p.type === PT.FRAGILE) { p.used = true; player.vy = JUMP_FORCE; }
+        else if (p.type === PT.STAR) { 
+           player.vy = JUMP_FORCE; 
+           if (!p.used) { score += 50; p.used = true; createBurst(p.x + PLAT_W/2, p.y, '#ffd700'); }
+        }
+        else { player.vy = JUMP_FORCE; }
       }
     }
-  }
 
-  // Boost collection
-  for (const b of boosts) {
-    if (b.collected) continue;
-    const bx = b.x, by = b.y - cameraY;
-    if (
-      player.x + player.w > bx && player.x < bx + 20 &&
-      player.y + player.h > by && player.y < by + 22
-    ) {
-      collectBoost(b);
-    }
-  }
-
-  // Update platforms
-  for (const p of platforms) {
+    // Спец эффекты платформ
     if (p.type === PT.LIFT) {
-      p.x += p.liftDir * p.liftSpeed;
-      if (p.x <= p.liftMin || p.x >= p.liftMax) p.liftDir *= -1;
+      p.x += p.side * 2;
+      if (p.x < 0 || p.x > canvas.width - PLAT_W) p.side *= -1;
     }
-    if (p.type === PT.LOOSE && p.used) {
-      p.y += 3;
+    if (p.used && p.type === PT.FRAGILE) p.opacity -= 0.1;
+    if (p.used && p.type === PT.LOOSE) p.y += 10;
+  });
+
+  // Сбор бустеров
+  boosts.forEach(b => {
+    if (b.active && 
+        player.x < b.x + 20 && player.x + player.w > b.x && 
+        player.y < b.y + 20 && player.y + player.h > b.y) {
+      b.active = false;
+      if (b.type === BT.SPRING) player.vy = SPRING_FORCE;
+      if (b.type === BT.ROCKET) rocketTimer = 200;
+      if (b.type === BT.MAGNET) magnetTimer = 500;
+      createBurst(b.x, b.y, '#fff');
     }
-    if (p.type === PT.FRAGILE && p.used) {
-      p.opacity -= 0.05;
-    }
-    if (p.type === PT.BOMB) {
-      if (p.blinking) {
-        p.bombTimer += dt;
-        if (p.bombTimer > 900) { p.used = true; p.opacity = 0; spawnExplosion(p.x + PLAT_W/2, p.y - cameraY); }
-      }
-    }
+  });
+
+  // Очистка и спавн новых платформ
+  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100);
+  boosts = boosts.filter(b => b.y - cameraY < canvas.height + 100);
+  
+  if (platforms.length < 20) {
+    let lastY = platforms[platforms.length - 1].y;
+    spawnPlatform(lastY - 80);
   }
 
-  // Prune off-screen platforms & generate new ones
-  platforms = platforms.filter(p => (p.y - cameraY) < H() + 100 && p.opacity > 0.05);
-  boosts = boosts.filter(b => !b.collected && (b.y - cameraY) < H() + 100);
-
-  // Generate platforms above
-  const topmost = Math.min(...platforms.map(p => p.y));
-  if (topmost - cameraY > -H() * 4) {
-    let y = topmost - randomPlatGap();
-    while (y - cameraY > -H() * 5) {
-      addRandomPlatform(y);
-      y -= randomPlatGap();
-    }
-  }
-
-  // Update particles
-  updateParticles(dt);
-
-  // First jump achievement
-  if (!firstJumpDone && score > 5) {
-    firstJumpDone = true;
-    unlockAchievement('a_first');
-  }
-
-  // Fall off bottom → game over
-  if (player.y - cameraY > H() + 60) {
-    gameOver();
-  }
+  // Смерть
+  if (player.y - cameraY > canvas.height + 100) endGame();
 }
 
-function handleLand(p) {
-  player.y = (p.y - cameraY) - player.h;
-  player.y += cameraY;
-  player.vy = JUMP_FORCE;
-  p.used = true;
-
-  if (p.type === PT.FRAGILE) { /* already fades */ }
-  if (p.type === PT.BOMB) { p.blinking = true; }
-  if (p.type === PT.STAR && !p.scored) {
-    p.scored = true;
-    score += 10;
-    updateScoreHUD();
-    spawnHeartBurst(p.x + PLAT_W/2, p.y - cameraY, 6);
-    luckyPlatformCount++;
-    if (luckyPlatformCount >= 5) unlockAchievement('a_lucky');
+function endGame() {
+  gameState = 'gameover';
+  totalScore += score;
+  localStorage.setItem('hj_total', totalScore);
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem('hj_best', bestScore);
   }
+  
+  document.getElementById('go-score-msg').textContent = `Ты пролетела ${score} метров!`;
+  document.getElementById('hud').style.display = 'none';
+  showScreen('gameover-screen');
+  checkAchievements();
 }
 
-function collectBoost(b) {
-  b.collected = true;
-  if (b.type === BT.SPRING) {
-    player.vy = SPRING_FORCE;
-    spawnHeartBurst(b.x + 10, b.y - cameraY, 5);
-  } else if (b.type === BT.ROCKET) {
-    rocketActive = true;
-    rocketTimer = ROCKET_DURATION;
-    spawnHeartBurst(b.x + 10, b.y - cameraY, 8);
-    document.getElementById('boost-hud').textContent = '🚀';
-  } else if (b.type === BT.MAGNET) {
-    magnetActive = true;
-    magnetTimer = MAGNET_DURATION;
-    spawnHeartBurst(b.x + 10, b.y - cameraY, 5);
-    document.getElementById('boost-hud').textContent = '🧲';
-  }
-}
-
-// ===================== DRAW =====================
-const PLAT_COLORS = {
-  [PT.NORMAL]:  { fill: '#e0569a', stroke: '#ff87c3' },
-  [PT.LOOSE]:   { fill: '#c06020', stroke: '#e8883a' },
-  [PT.FRAGILE]: { fill: '#9045c0', stroke: '#c87fff' },
-  [PT.LIFT]:    { fill: '#4090e0', stroke: '#7dc0ff' },
-  [PT.BOMB]:    { fill: '#c03030', stroke: '#ff6060' },
-  [PT.STAR]:    { fill: '#c0a000', stroke: '#ffdd44' },
-};
-
-const BOOST_EMOJI = { [BT.SPRING]: '🌀', [BT.ROCKET]: '🚀', [BT.MAGNET]: '🧲' };
-
+// ===================== ОТРИСОВКА =====================
 function draw() {
-  ctx.clearRect(0, 0, W(), H());
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (gameState !== 'playing') return;
+  if (gameState === 'playing' || gameState === 'gameover') {
+    // Платформы
+    platforms.forEach(p => {
+      ctx.globalAlpha = p.opacity;
+      let color = '#ff5fa0';
+      if (p.type === PT.LIFT) color = '#4facfe';
+      if (p.type === PT.FRAGILE) color = '#a18cd1';
+      if (p.type === PT.LOOSE) color = '#f093fb';
+      if (p.type === PT.STAR) color = '#ffd700';
 
-  // Background stars (static for perf)
-  drawStars();
-
-  // Platforms
-  for (const p of platforms) {
-    const py = p.y - cameraY;
-    if (py > H() + 20 || py < -40) continue;
-    const col = PLAT_COLORS[p.type];
-    ctx.save();
-    ctx.globalAlpha = p.opacity;
-
-    if (p.type === PT.BOMB && p.blinking) {
-      ctx.globalAlpha *= (Math.sin(Date.now() / 80) * 0.5 + 0.5) * 0.8 + 0.2;
-    }
-
-    // Platform body
-    ctx.fillStyle = col.fill;
-    roundRect(ctx, p.x, py, p.w, p.h, 7);
-    ctx.fill();
-    ctx.strokeStyle = col.stroke;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Icons
-    ctx.font = '11px Nunito';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffffff99';
-    const icons = { [PT.LOOSE]: '↓', [PT.FRAGILE]: '✕', [PT.LIFT]: '↔', [PT.BOMB]: '💥', [PT.STAR]: '⭐' };
-    if (icons[p.type]) {
-      ctx.fillStyle = '#fff';
-      ctx.font = p.type === PT.STAR || p.type === PT.BOMB ? '11px serif' : '10px Nunito';
-      ctx.fillText(icons[p.type], p.x + p.w/2, py + 10);
-    }
-
-    ctx.restore();
-  }
-
-  // Boosts
-  for (const b of boosts) {
-    if (b.collected) continue;
-    const by = b.y - cameraY;
-    if (by > H() + 30 || by < -40) continue;
-    ctx.font = '18px serif';
-    ctx.textAlign = 'center';
-    const bob = Math.sin(Date.now() / 400 + b.x) * 3;
-    ctx.fillText(BOOST_EMOJI[b.type], b.x + 10, by + bob);
-  }
-
-  // Player (heart)
-  drawHeart(player.x + player.w/2, player.y - cameraY + player.h/2, 16, rocketActive);
-
-  // Particle overlay drawn on pCtx
-  pCtx.clearRect(0, 0, W(), H());
-  drawParticles();
-}
-
-let starsSeeded = false, starPositions = [];
-function drawStars() {
-  if (!starsSeeded) {
-    for (let i = 0; i < 60; i++) {
-      starPositions.push({ x: Math.random() * 430, y: Math.random() * 900, r: Math.random() * 1.5 + 0.3, a: Math.random() });
-    }
-    starsSeeded = true;
-  }
-  for (const s of starPositions) {
-    const sy = ((s.y - cameraY * 0.15) % H() + H()) % H();
-    ctx.beginPath();
-    ctx.arc(s.x, sy, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,200,230,${s.a * 0.6})`;
-    ctx.fill();
-  }
-}
-
-function drawHeart(cx, cy, size, rocket) {
-  ctx.save();
-  if (rocket) {
-    // Flame trail
-    ctx.font = '22px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('🔥', cx, cy + size + 10);
-  }
-  // Pulse when rocket
-  const pulse = rocket ? 1 + Math.sin(Date.now() / 80) * 0.08 : 1;
-  ctx.scale(pulse, pulse);
-  const s = size;
-  ctx.beginPath();
-  ctx.moveTo(cx / pulse, (cy - s * 0.3) / pulse);
-  ctx.bezierCurveTo(cx / pulse, (cy - s) / pulse, (cx - s * 1.1) / pulse, (cy - s) / pulse, (cx - s * 1.1) / pulse, (cy - s * 0.3) / pulse);
-  ctx.bezierCurveTo((cx - s * 1.1) / pulse, (cy + s * 0.3) / pulse, cx / pulse, (cy + s * 0.85) / pulse, cx / pulse, (cy + s * 0.85) / pulse);
-  ctx.bezierCurveTo(cx / pulse, (cy + s * 0.85) / pulse, (cx + s * 1.1) / pulse, (cy + s * 0.3) / pulse, (cx + s * 1.1) / pulse, (cy - s * 0.3) / pulse);
-  ctx.bezierCurveTo((cx + s * 1.1) / pulse, (cy - s) / pulse, cx / pulse, (cy - s) / pulse, cx / pulse, (cy - s * 0.3) / pulse);
-  ctx.closePath();
-
-  const grad = ctx.createRadialGradient(cx / pulse, (cy - s * 0.2) / pulse, 2, cx / pulse, cy / pulse, s * 1.2);
-  grad.addColorStop(0, '#ff80b0');
-  grad.addColorStop(1, '#c8003c');
-  ctx.fillStyle = grad;
-  ctx.shadowColor = '#ff69b4';
-  ctx.shadowBlur = 12;
-  ctx.fill();
-  ctx.restore();
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-}
-
-// ===================== PARTICLES =====================
-function spawnHeartBurst(x, y, count) {
-  for (let i = 0; i < count; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    const speed = 2 + Math.random() * 4;
-    particles.push({
-      x, y,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed - 2,
-      life: 1,
-      decay: 0.025 + Math.random() * 0.02,
-      size: 8 + Math.random() * 8,
-      emoji: Math.random() < 0.5 ? '❤️' : '💕',
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8);
+      ctx.fill();
+      
+      if (p.type === PT.STAR) {
+        ctx.fillStyle = '#fff';
+        ctx.font = '12px serif';
+        ctx.fillText('⭐', p.x + PLAT_W/2 - 6, p.y - cameraY + 12);
+      }
+      ctx.globalAlpha = 1;
     });
-  }
-}
 
-function spawnExplosion(x, y) {
-  for (let i = 0; i < 12; i++) {
-    const angle = Math.random() * Math.PI * 2;
-    particles.push({
-      x, y,
-      vx: Math.cos(angle) * (3 + Math.random() * 5),
-      vy: Math.sin(angle) * (3 + Math.random() * 5),
-      life: 1, decay: 0.03,
-      size: 10 + Math.random() * 10,
-      emoji: '💥',
+    // Бустеры
+    boosts.forEach(b => {
+      if (!b.active) return;
+      let emoji = '🌀';
+      if (b.type === BT.ROCKET) emoji = '🚀';
+      if (b.type === BT.MAGNET) emoji = '🧲';
+      ctx.font = '24px serif';
+      ctx.fillText(emoji, b.x, b.y - cameraY + 20);
     });
+
+    // Игрок
+    const skin = SKINS.find(s => s.id === currentSkin);
+    if (skin.type === 'emoji') {
+      ctx.font = '40px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(skin.char, player.x + player.w/2, player.y - cameraY + 35);
+    } else {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(player.x + player.w/2, player.y - cameraY + player.h/2, 20, 0, Math.PI*2);
+      ctx.clip();
+      ctx.drawImage(vikaImg, player.x, player.y - cameraY, 40, 40);
+      ctx.restore();
+    }
+    
+    if (rocketTimer > 0) {
+        ctx.font = '20px serif';
+        ctx.fillText('🔥', player.x + player.w/2, player.y - cameraY + 60);
+    }
   }
+
+  requestAnimationFrame(draw);
 }
 
-function updateParticles(dt) {
-  for (const p of particles) {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.15;
-    p.life -= p.decay;
-  }
-  particles = particles.filter(p => p.life > 0);
+// ===================== UI И ДОСТИЖЕНИЯ =====================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+  if (id !== 'none') document.getElementById(id).style.display = 'flex';
+  
+  if (id === 'skins-screen') renderSkins();
+  if (id === 'ach-screen') renderAchievements();
 }
 
-function drawParticles() {
-  for (const p of particles) {
-    pCtx.save();
-    pCtx.globalAlpha = p.life;
-    pCtx.font = `${Math.round(p.size)}px serif`;
-    pCtx.textAlign = 'center';
-    pCtx.fillText(p.emoji, p.x, p.y);
-    pCtx.restore();
-  }
-}
-
-// ===================== SCORE / HUD =====================
-function updateScoreHUD() {
+function updateHUD() {
   document.getElementById('score-val').textContent = score;
+  document.getElementById('total-val').textContent = `всего: ${totalScore.toLocaleString()}`;
 }
 
-// ===================== ACHIEVEMENTS =====================
-function checkAchievements() {
-  for (const a of ACHIEVEMENTS) {
-    if (a.special) continue;
-    if (score >= a.score) unlockAchievement(a.id);
-  }
-}
-
-let toastQueue = [], toastBusy = false;
-
-function unlockAchievement(id) {
-  if (unlockedAchs.has(id)) return;
-  unlockedAchs.add(id);
-  localStorage.setItem('hj_achs', JSON.stringify([...unlockedAchs]));
-  const a = ACHIEVEMENTS.find(x => x.id === id);
-  if (!a) return;
-  toastQueue.push(a);
-  if (!toastBusy) processToastQueue();
-  renderAchievements();
-}
-
-function processToastQueue() {
-  if (toastQueue.length === 0) { toastBusy = false; return; }
-  toastBusy = true;
-  const a = toastQueue.shift();
-  const el = document.getElementById('ach-toast');
-  el.innerHTML = `${a.icon} <b>${a.title}</b><br><small>${a.compliment}</small>`;
-  el.classList.add('show');
-  setTimeout(() => {
-    el.classList.remove('show');
-    setTimeout(processToastQueue, 500);
-  }, 3200);
+function renderSkins() {
+  const container = document.getElementById('skins-grid');
+  container.innerHTML = '';
+  SKINS.forEach(s => {
+    let locked = false;
+    if (s.reqType === 'best' && bestScore < s.req) locked = true;
+    if (s.reqType === 'total' && totalScore < s.req) locked = true;
+    
+    const div = document.createElement('div');
+    div.className = `skin-item ${locked ? 'locked' : ''} ${currentSkin === s.id ? 'selected' : ''}`;
+    div.innerHTML = `
+      <div class="skin-icon">${s.type === 'emoji' ? s.char : '🖼️'}</div>
+      <div style="font-size:0.8rem; font-weight:bold">${s.title}</div>
+      <div class="skin-price">${locked ? 'закрыто' : 'выбрано'}</div>
+    `;
+    if (!locked) div.onclick = () => { currentSkin = s.id; localStorage.setItem('hj_skin', s.id); renderSkins(); };
+    container.appendChild(div);
+  });
 }
 
 function renderAchievements() {
-  const list = document.getElementById('ach-list');
-  list.innerHTML = '';
-  for (const a of ACHIEVEMENTS) {
-    const unlocked = unlockedAchs.has(a.id);
+  const container = document.getElementById('ach-list');
+  container.innerHTML = '';
+  ACHIEVEMENTS.forEach(a => {
+    const unlocked = unlockedAchs.includes(a.id);
     const div = document.createElement('div');
-    div.className = 'ach-item ' + (unlocked ? 'unlocked' : 'locked');
+    div.className = `ach-item ${unlocked ? 'unlocked' : ''}`;
     div.innerHTML = `
-      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-icon">${unlocked ? a.icon : '❓'}</div>
       <div class="ach-info">
-        <div class="ach-title">${a.title}${!a.special ? ` — ${a.score} очков` : ''}</div>
-        <div class="ach-desc">${unlocked ? a.compliment : '???'}</div>
-      </div>`;
-    list.appendChild(div);
-  }
+        <b>${a.title}</b>
+        <span>${unlocked ? a.desc : 'Нужно постараться...'}</span>
+      </div>
+    `;
+    container.appendChild(div);
+  });
 }
+
+function checkAchievements() {
+  ACHIEVEMENTS.forEach(a => {
+    if (unlockedAchs.includes(a.id)) return;
+    
+    let pass = false;
+    if (a.type === 'best' && bestScore >= a.req) pass = true;
+    if (a.type === 'total' && totalScore >= a.req) pass = true;
+    if (a.type === 'games' && gamesPlayed >= a.req) pass = true;
+    
+    if (pass) {
+      unlockedAchs.push(a.id);
+      localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
+      showToast(a);
+    }
+  });
+}
+
+function showToast(a) {
+  const toast = document.getElementById('ach-toast');
+  toast.innerHTML = `<b>Достижение! ${a.icon}</b><br>${a.title}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function createBurst(x, y, color) {
+  // Простая анимация частиц (по желанию можно расширить)
+}
+
+// Запуск
+setInterval(update, 1000/60);
+draw();
+
 </script>
 </body>
 </html>
