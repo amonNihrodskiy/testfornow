@@ -1,7 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// ПРЕДЗАГРУЗКА КАРТИНОК
 const IMAGES = {};
 const UI_IMAGES = {
     blackhole: 'image/blackhole.png',
@@ -14,19 +13,12 @@ const UI_IMAGES = {
     vika: 'vika.png'
 };
 
-let loadedCount = 0;
-const totalImages = Object.keys(UI_IMAGES).length;
-
 Object.entries(UI_IMAGES).forEach(([name, src]) => {
     const img = new Image();
     img.src = src;
-    img.onload = () => {
-        IMAGES[name] = img;
-        loadedCount++;
-    };
+    img.onload = () => IMAGES[name] = img;
 });
 
-// ПАРАМЕТРЫ
 const PLAT_W = 75, PLAT_H = 15;
 const GRAVITY = 0.38, JUMP_FORCE = -12.5;
 
@@ -34,41 +26,41 @@ const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, STAR: 4 };
 const BT = { SPRING: 0, BIGSPRING: 1, ROCKET: 2, MAGNET: 3, COIN: 4, BLACKHOLE: 5 };
 
 const ACHIEVEMENTS = [
-    { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best', coin: 50 },
-    { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best', coin: 100 },
-    { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best', coin: 250 },
-    { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best', coin: 500 },
-    { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total', coin: 30 },
-    { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total', coin: 70 },
-    { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total', coin: 100 },
-    { id: 't15k', icon: '🧸', title: 'Прелесть', desc: '15,000 очков в сумме', req: 15000, type: 'total', coin: 150 },
-    { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50,000 очков в сумме', req: 50000, type: 'total', coin: 300 },
-    { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100,000 очков в сумме', req: 100000, type: 'total', coin: 500 },
-    { id: 't250k', icon: '🌈', title: 'Волшебная', desc: '250,000 очков в сумме', req: 250000, type: 'total', coin: 1000 },
-    { id: 't500k', icon: '👑', title: 'Моя Вселенная', desc: '500,000 очков в сумме', req: 500000, type: 'total', coin: 2500 }
+    { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best', coins: 50 },
+    { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best', coins: 100 },
+    { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best', coins: 250 },
+    { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best', coins: 500 },
+    { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total', coins: 50 },
+    { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total', coins: 100 },
+    { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total', coins: 200 },
+    { id: 't15k', icon: '🧸', title: 'Прелесть', desc: '15,000 очков в сумме', req: 15000, type: 'total', coins: 300 },
+    { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50,000 очков в сумме', req: 50000, type: 'total', coins: 500 },
+    { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100,000 очков в сумме', req: 100000, type: 'total', coins: 1000 },
+    { id: 't250k', icon: '🌈', title: 'Волшебная', desc: '250,000 очков в сумме', req: 250000, type: 'total', coins: 2000 },
+    { id: 't500k', icon: '👑', title: 'Моя Вселенная', desc: '500,000 очков в сумме', req: 500000, type: 'total', coins: 5000 }
 ];
 
 const PROG_ACHS = [
-    { id: 's_spring', icon: '🌀', title: 'Высокий полет', desc: 'Прыжки на пружине', key: 's_spring', targets: [1, 5, 10, 20, 50], coin: 20 },
-    { id: 's_big', icon: '🚀', title: 'Мега-прыжок', desc: 'На большой пружине', key: 's_big', targets: [1, 5, 10, 20, 50], coin: 40 },
-    { id: 's_hole', icon: '🕳️', title: 'Исследователь', desc: 'Попасть в черную дыру', key: 's_hole', targets: [1, 5, 10, 20, 50], coin: 15 },
-    { id: 's_rocket', icon: '🌌', title: 'Астронавт', desc: 'Полеты на ракете', key: 's_rocket', targets: [1, 5, 10, 20, 50], coin: 50 }
+    { id: 'p_spring', icon: '🌀', title: 'Высокий полёт', desc: 'Прыжки на пружине', key: 's_spring', targets: [1, 5, 10, 20, 50], coinPer: 20 },
+    { id: 'p_big', icon: '🚀', title: 'Мега прыжок', desc: 'На большой пружине', key: 's_big', targets: [1, 5, 10, 20, 50], coinPer: 40 },
+    { id: 'p_hole', icon: '🕳️', title: 'Сорвиголова', desc: 'Попасть в черную дыру', key: 's_hole', targets: [1, 5, 10, 20, 50], coinPer: 15 },
+    { id: 'p_rocket', icon: '🌌', title: 'Астронавт', desc: 'Полет на ракете', key: 's_rocket', targets: [1, 5, 10, 20, 50], coinPer: 100 }
 ];
 
 const SKINS = [
     { id: 'red', char: '❤️', title: 'Классика', type: 'emoji', req: 0 },
-    { id: 'pink', char: '💕', title: 'Нежность', type: 'emoji', req: 2000, reqType: 'total' },
-    { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 10000, reqType: 'total' },
-    { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 50000, reqType: 'total' },
-    { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 150000, reqType: 'total' },
+    { id: 'pink', char: '💕', title: 'Нежность', type: 'emoji', req: 5000, reqType: 'total' },
+    { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 25000, reqType: 'total' },
+    { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 100000, reqType: 'total' },
+    { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 250000, reqType: 'total' },
     { id: 'vika', char: 'vika.png', title: 'Моя Вика', type: 'image', req: 500000, reqType: 'total' }
 ];
 
 const BACKGROUNDS = [
-    { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0, pColors: ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'] },
-    { id: 'night', title: 'Полночь', class: 'bg-night', price: 50, pColors: ['#3a47d5', '#00d2ff', '#6a11cb', '#2575fc', '#f9d423'] },
-    { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150, pColors: ['#ee0979', '#ff6a00', '#f12711', '#833ab4', '#ffcc33'] },
-    { id: 'space', title: 'Космос', class: 'bg-space', price: 500, pColors: ['#7f00ff', '#e100ff', '#000046', '#1cb5e0', '#00f2fe'] }
+    { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0, pCols: ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'] },
+    { id: 'night', title: 'Полночь', class: 'bg-night', price: 50, pCols: ['#3a47d5', '#00d2ff', '#6a11cb', '#2575fc', '#f9d423'] },
+    { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150, pCols: ['#ee0979', '#ff6a00', '#f12711', '#833ab4', '#ffcc33'] },
+    { id: 'space', title: 'Космос', class: 'bg-space', price: 500, pCols: ['#7f00ff', '#e100ff', '#000046', '#1cb5e0', '#00f2fe'] }
 ];
 
 // СОСТОЯНИЕ
@@ -77,8 +69,8 @@ let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
 let coins = parseInt(localStorage.getItem('hj_coins') || '0');
 let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
-let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 let lastMilestones = JSON.parse(localStorage.getItem('hj_milestones') || '{"s_spring":0, "s_big":0, "s_hole":0, "s_rocket":0}');
+let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 let currentSkin = localStorage.getItem('hj_skin') || 'red';
 let currentBg = localStorage.getItem('hj_bg') || 'default';
 let stats = JSON.parse(localStorage.getItem('hj_stats') || '{"s_spring":0,"s_big":0,"s_hole":0,"s_rocket":0}');
@@ -133,16 +125,14 @@ function spawnPlatform(y) {
             const b = Math.random();
             if (b < 0.3) itype = BT.SPRING;
             else if (b < 0.5) itype = BT.BIGSPRING;
-            else if (b < 0.7 && currentH > 250) itype = BT.ROCKET;
+            else if (b < 0.8 && currentH > 250) itype = BT.ROCKET;
             else itype = BT.MAGNET;
         }
         items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -32, type: itype, active: true, state: 1 });
     }
+    // Черные дыры НЕ на платформах
     if (currentH > 400 && Math.random() < 0.03) {
-        const lastHole = items.find(it => it.type === BT.BLACKHOLE);
-        if (!lastHole || Math.abs(lastHole.y - y) > 500) {
-            items.push({ x: Math.random() * (canvas.width - 60), y: y - 120, type: BT.BLACKHOLE, active: true });
-        }
+        items.push({ x: Math.random() * (canvas.width - 60), y: y - 180, type: BT.BLACKHOLE, active: true });
     }
 }
 
@@ -177,12 +167,10 @@ function update() {
 
     if (magnetTimer > 0) {
         magnetTimer--;
-        document.getElementById('magnet-bar-container').style.display = 'block';
+        document.getElementById('magnet-timer-zone').style.display = 'flex';
         document.getElementById('magnet-bar').style.width = (magnetTimer / magnetMax * 100) + '%';
-        if (magnetTimer <= 0) document.getElementById('magnet-bar-container').style.display = 'none';
+        if (magnetTimer <= 0) document.getElementById('magnet-timer-zone').style.display = 'none';
     }
-
-    const platCols = BACKGROUNDS.find(b => b.id === currentBg).pColors;
 
     platforms.forEach(p => {
         if (p.type === PT.LIFT) {
@@ -205,7 +193,7 @@ function update() {
         if (!it.active) return;
         if (it.parent) { it.x = it.parent.x + it.offX; it.y = it.parent.y + it.offY; }
         if (magnetTimer > 0 && it.type === BT.COIN) {
-            let dx = player.x - it.x, dy = player.y - it.y;
+            let dx = (player.x + 20) - (it.x + 15), dy = (player.y - cameraY + 20) - (it.y - cameraY + 15);
             let dist = Math.sqrt(dx*dx + dy*dy);
             if (dist < 250) { it.parent = null; it.x += dx * 0.2; it.y += dy * 0.2; }
         }
@@ -220,11 +208,17 @@ function update() {
     platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0.05);
     items = items.filter(it => it.active && it.y - cameraY < canvas.height + 100);
     if (platforms.length < 18) spawnPlatform(platforms[platforms.length-1].y - 85);
-    if (player.y - cameraY > canvas.height + 100) endGame();
+    if (player.y - cameraY > canvas.height + 100) endGame("Ты умничка! 💕");
 }
 
 function handlePickup(it) {
-    if (it.type === BT.BLACKHOLE) { updateStat('s_hole'); endGame(); return; }
+    // Иммунитет ракеты к дырам
+    if (it.type === BT.BLACKHOLE) {
+        if (rocketActive) return; // Пролетаем сквозь
+        updateStat('s_hole');
+        endGame("Черная дыра засосала... 🌌");
+        return;
+    }
     if (it.type === BT.COIN) { it.active = false; coins++; addBonus(0, it.x, it.y, "+1 💰"); }
     if (it.type === BT.SPRING && player.vy > 0) { updateStat('s_spring'); player.vy = -18; it.state = 2; setTimeout(()=>it.active=false, 500); }
     if (it.type === BT.BIGSPRING && player.vy > 0) { updateStat('s_big'); player.vy = -26; it.state = 2; setTimeout(()=>it.active=false, 500); }
@@ -238,31 +232,31 @@ function updateStat(key) {
     checkAchievements();
 }
 
-function endGame() {
+function endGame(msg) {
     gameState = 'gameover'; totalScore += score;
     localStorage.setItem('hj_total', totalScore); localStorage.setItem('hj_coins', coins);
     if (score > bestScore) { bestScore = score; localStorage.setItem('hj_best', bestScore); }
     checkAchievements();
     document.getElementById('go-title').textContent = "Не расстраивайся!";
-    document.getElementById('go-msg').innerHTML = `Ты умничка! Пролетела <b>${score}</b> метров.`;
+    document.getElementById('go-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
     document.getElementById('hud').style.display = 'none';
-    document.getElementById('magnet-bar-container').style.display = 'none';
+    document.getElementById('magnet-timer-zone').style.display = 'none';
     showScreen('gameover-screen');
 }
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (gameState === 'playing' || gameState === 'gameover') {
-        const platCols = BACKGROUNDS.find(b => b.id === currentBg).pColors;
+        const pCols = BACKGROUNDS.find(b => b.id === currentBg).pCols;
         
         platforms.forEach(p => {
             ctx.save(); ctx.globalAlpha = p.opacity;
-            ctx.fillStyle = platCols[p.type];
+            ctx.fillStyle = pCols[p.type];
             if (p.type === PT.STAR && p.used) ctx.fillStyle = '#555';
             ctx.beginPath(); ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8); ctx.fill(); ctx.restore();
         });
 
-        // СБРОС АЛЬФЫ ПЕРЕД ПРЕДМЕТАМИ (чтобы не мерцали)
+        // ПРИНУДИТЕЛЬНЫЙ СБРОС АЛЬФЫ для предметов
         ctx.globalAlpha = 1.0;
 
         items.forEach(it => {
@@ -288,6 +282,7 @@ function draw() {
 
 function drawCharacter(x, y, scale) {
     ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+    ctx.globalAlpha = 1.0;
     const skin = SKINS.find(s => s.id === currentSkin);
     if (skin.type === 'emoji') { ctx.font = '45px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15); }
     else if (IMAGES.vika) { ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip(); ctx.drawImage(IMAGES.vika, -22, -22, 44, 44); }
@@ -313,7 +308,7 @@ function renderList(containerId, list, storageKey) {
     const container = document.getElementById(containerId); container.innerHTML = '';
     list.forEach(item => {
         let locked = (item.reqType === 'total' && totalScore < item.req);
-        if (containerId === 'bg-grid') locked = false; // Фоны только покупаются
+        if (containerId === 'bg-grid') locked = false;
         let owned = (containerId === 'bg-grid') ? ownedBgs.includes(item.id) : !locked;
         const div = document.createElement('div');
         div.className = `card ${locked ? 'locked' : ''} ${(item.id === currentSkin || item.id === currentBg) ? 'selected' : ''}`;
@@ -345,31 +340,24 @@ function renderAchievements() {
 }
 
 function checkAchievements() {
-    // Обычные
     ACHIEVEMENTS.forEach(a => {
         if (!unlockedAchs.includes(a.id) && ((a.type==='best'&&score>=a.req)||(a.type==='total'&&totalScore>=a.req))) {
             unlockedAchs.push(a.id); localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
-            addCoins(a.coin); showToast(`🏆 ${a.title}`);
+            coins += a.coins; showToast(`🏆 ${a.title} (+${a.coins}💰)`); updateHUD();
         }
     });
-    // Прогрессивные
     PROG_ACHS.forEach(pa => {
         let count = stats[pa.key];
-        let milestones = pa.targets;
-        milestones.forEach(m => {
+        pa.targets.forEach(m => {
             if (count >= m && lastMilestones[pa.key] < m) {
                 lastMilestones[pa.key] = m;
                 localStorage.setItem('hj_milestones', JSON.stringify(lastMilestones));
-                addCoins(pa.coin); showToast(`⭐ ${pa.title} ${m}!`);
+                coins += pa.coinPer;
+                showToast(`⭐ ${pa.title} ${m}! (+${pa.coinPer}💰)`);
+                updateHUD();
             }
         });
     });
-}
-
-function addCoins(amount) {
-    coins += amount;
-    localStorage.setItem('hj_coins', coins);
-    updateHUD();
 }
 
 function showToast(text) {
