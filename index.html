@@ -20,7 +20,6 @@ body {
   color: #fff;
 }
 
-/* Сообщение для ПК */
 #desktop-msg {
   display: none;
   flex-direction: column;
@@ -30,21 +29,23 @@ body {
   padding: 40px;
   color: #ffcce6;
 }
-#desktop-msg h1 { font-size: 4rem; margin-bottom: 20px; }
 
-/* Обертка игры */
 #game-wrapper {
   position: relative;
   width: 100vw;
   height: 100dvh;
   max-width: 430px;
   overflow: hidden;
-  background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%);
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
   display: flex;
 }
 
-/* Исправленная логика отображения экранов */
+/* Динамические фоны */
+.bg-default { background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%); }
+.bg-night { background: linear-gradient(180deg, #020111 0%, #191621 100%); }
+.bg-sunset { background: linear-gradient(180deg, #452c63 0%, #f77062 100%); }
+.bg-space { background: #000 url('https://www.transparenttextures.com/patterns/stardust.png'); }
+
 @media (min-width: 650px) {
   #game-wrapper { display: none !important; }
   #desktop-msg { display: flex !important; }
@@ -55,23 +56,34 @@ canvas { display: block; width: 100%; height: 100%; }
 /* HUD */
 #hud {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 10px;
+  left: 10px;
   z-index: 10;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-#score-val { font-size: 2.2rem; font-weight: 900; color: #ffcce6; text-shadow: 0 0 10px #ff69b4; }
-#total-val { font-size: 0.8rem; opacity: 0.8; color: #ff9ec8; }
+.hud-line { display: flex; align-items: baseline; gap: 8px; }
+#score-val { font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.hud-small { font-size: 0.75rem; opacity: 0.8; color: #ff9ec8; font-weight: 700; text-transform: uppercase; }
 
-#boost-hud {
+#coin-hud {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 2rem;
+  top: 10px;
+  right: 10px;
   z-index: 10;
+  background: rgba(0,0,0,0.3);
+  padding: 5px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 900;
+  color: #ffd700;
 }
 
-/* Экраны */
+/* Screens */
 .screen {
   position: absolute;
   inset: 0;
@@ -80,141 +92,140 @@ canvas { display: block; width: 100%; height: 100%; }
   align-items: center;
   justify-content: center;
   z-index: 20;
-  background: rgba(26, 0, 16, 0.9);
+  background: rgba(20, 0, 10, 0.92);
   backdrop-filter: blur(10px);
   padding: 20px;
   text-align: center;
 }
 
-h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bottom: 10px; }
-.subtitle { color: #ff9ec8; margin-bottom: 25px; font-size: 1rem; line-height: 1.4; }
+h1 { font-size: 2.2rem; color: #ffcce6; text-shadow: 0 0 15px #ff69b4; margin-bottom: 10px; }
+.subtitle { color: #ff9ec8; margin-bottom: 20px; font-size: 0.9rem; }
 
 .btn {
   background: linear-gradient(135deg, #ff5fa0, #e0105a);
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   border: none;
   border-radius: 50px;
-  padding: 12px 35px;
-  margin: 8px;
+  padding: 12px 30px;
+  margin: 5px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(224, 16, 90, 0.4);
-  width: 230px;
-  transition: transform 0.1s;
+  width: 200px;
+  transition: 0.2s;
 }
 .btn:active { transform: scale(0.95); }
-.btn.secondary { background: transparent; border: 2px solid #ff5fa0; color: #ff9ec8; box-shadow: none; }
+.btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid #ff5fa0; color: #ffcce6; }
 
-/* Скины */
-.skins-grid {
+/* Grids */
+.scroll-area {
+  width: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  padding: 10px;
+}
+.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 25px;
-  width: 100%;
-  max-width: 360px;
+  gap: 10px;
 }
-.skin-item {
-  background: rgba(255, 255, 255, 0.08);
+.item-card {
+  background: rgba(255, 255, 255, 0.05);
   border: 2px solid transparent;
-  border-radius: 15px;
+  border-radius: 12px;
   padding: 10px;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: 0.2s;
 }
-.skin-item.locked { opacity: 0.4; filter: grayscale(1); cursor: default; }
-.skin-item.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
-.skin-icon { font-size: 1.6rem; margin-bottom: 5px; }
-.skin-title { font-size: 0.7rem; font-weight: bold; margin-bottom: 4px; color: #ffcce6; }
-.skin-price { font-size: 0.6rem; color: #ff9ec8; }
+.item-card.locked { opacity: 0.5; }
+.item-card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
+.item-icon { font-size: 1.5rem; margin-bottom: 5px; height: 40px; display: flex; align-items: center; }
+.item-title { font-size: 0.65rem; font-weight: bold; margin-bottom: 5px; }
+.item-price { font-size: 0.7rem; color: #ffd700; font-weight: 900; }
 
-/* Достижения */
-.ach-list {
-  width: 100%;
-  max-height: 380px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  padding-right: 5px;
-}
-.ach-item {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  text-align: left;
-  border-left: 4px solid #444;
-}
-.ach-item.unlocked { border-left-color: #ff5fa0; background: rgba(255, 95, 160, 0.1); }
-.ach-icon { font-size: 1.5rem; }
-.ach-info b { display: block; font-size: 0.9rem; color: #ffcce6; }
-.ach-info span { font-size: 0.75rem; color: #ff9ec8; opacity: 0.8; }
-
-/* Тост */
 #ach-toast {
   position: absolute;
-  top: 80px;
+  top: 70px;
   left: 50%;
   transform: translateX(-50%) translateY(-20px);
-  background: linear-gradient(135deg, #ff5fa0, #e0105a);
-  padding: 12px 25px;
+  background: #e0105a;
+  padding: 10px 20px;
   border-radius: 15px;
   z-index: 100;
   opacity: 0;
   transition: 0.5s;
   pointer-events: none;
-  width: 85%;
+  width: 80%;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 #ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
-<body>
+<body class="bg-default">
 
 <div id="desktop-msg">
   <h1>📱💕</h1>
-  <p>Эта игра создана специально для телефона.<br>Пожалуйста, открой её на своём смартфоне!</p>
+  <p>Играй на телефоне!</p>
 </div>
 
 <div id="game-wrapper">
+  <!-- HUD -->
   <div id="hud" style="display:none">
-    <div id="score-val">0</div>
-    <div id="total-val">всего: 0</div>
+    <div class="hud-line">
+      <span id="score-val">0</span>
+    </div>
+    <div class="hud-line">
+      <span class="hud-small">Рекорд:</span><span id="best-val" style="font-size:0.8rem">0</span>
+    </div>
+    <div class="hud-line">
+      <span class="hud-small">Всего:</span><span id="total-val" style="font-size:0.8rem">0</span>
+    </div>
   </div>
-  <div id="boost-hud"></div>
+
+  <div id="coin-hud" style="display:none">
+    <span>💰</span><span id="coin-val">0</span>
+  </div>
 
   <canvas id="gameCanvas"></canvas>
 
+  <!-- Главное меню -->
   <div class="screen" id="menu-screen">
     <h1>Heart Jump</h1>
-    <div class="subtitle">самой лучшей девочке во вселенной 💕</div>
+    <div class="subtitle">Лети к звездам, любимая! 💕</div>
     <button class="btn" onclick="startGame()">Новая игра</button>
-    <button class="btn secondary" onclick="showScreen('skins-screen')">Скины</button>
+    <button class="btn secondary" onclick="showScreen('skins-screen')">Персонажи</button>
+    <button class="btn secondary" onclick="showScreen('bg-screen')">Фоны</button>
     <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
   </div>
 
+  <!-- Скины -->
   <div class="screen" id="skins-screen" style="display:none">
-    <h1>Твои образы</h1>
-    <div class="skins-grid" id="skins-grid"></div>
+    <h1>Персонажи</h1>
+    <div class="scroll-area"><div class="grid" id="skins-grid"></div></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
+  <!-- Фоны -->
+  <div class="screen" id="bg-screen" style="display:none">
+    <h1>Фоны</h1>
+    <div class="scroll-area"><div class="grid" id="bg-grid"></div></div>
+    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
+  </div>
+
+  <!-- Достижения -->
   <div class="screen" id="ach-screen" style="display:none">
-    <h1>Достижения</h1>
-    <div class="ach-list" id="ach-list"></div>
+    <h1>Успехи</h1>
+    <div class="scroll-area"><div id="ach-list" style="text-align:left"></div></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
+  <!-- Game Over -->
   <div class="screen" id="gameover-screen" style="display:none">
-    <h1 id="go-title">Не расстраивайся!</h1>
-    <div class="subtitle" id="go-score-msg">Ты умничка!</div>
+    <h1 id="go-title">Упс!</h1>
+    <div class="subtitle" id="go-msg"></div>
     <button class="btn" onclick="startGame()">Еще раз</button>
     <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
   </div>
@@ -223,18 +234,34 @@ h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bo
 </div>
 
 <script>
-// ===================== ДАННЫЕ =====================
+// ===================== РЕСУРСЫ =====================
+const IMAGES = {};
+const LOAD_LIST = {
+  blackhole: 'image/blackhole.png',
+  rocket: 'image/rocet.png',
+  bigrocket: 'image/bigrocet.png',
+  spring1: 'image/spring1.png',
+  spring2: 'image/spring2.png',
+  bigspring1: 'image/bigspring1.png',
+  bigspring2: 'image/bigspring2.png',
+  magnet: 'image/magnet.png',
+  vika: 'vika.png'
+};
+
+Object.entries(LOAD_LIST).forEach(([key, src]) => {
+  const img = new Image();
+  img.src = src;
+  IMAGES[key] = img;
+});
+
+// ===================== КОНСТАНТЫ =====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-
-const PLAT_W = 75;
-const PLAT_H = 15;
-const GRAVITY = 0.38;
-const JUMP_FORCE = -12.5;
-const SPRING_FORCE = -20;
+const PLAT_W = 75, PLAT_H = 15;
+const GRAVITY = 0.38, JUMP_FORCE = -12.5;
 
 const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, STAR: 4 };
-const BT = { SPRING: 0, ROCKET: 1, MAGNET: 2 };
+const BT = { SPRING: 0, BIGSPRING: 1, ROCKET: 2, MAGNET: 3, COIN: 4, BLACKHOLE: 5 };
 
 const SKINS = [
   { id: 'red', char: '❤️', title: 'Классика', type: 'emoji', req: 0 },
@@ -245,49 +272,36 @@ const SKINS = [
   { id: 'vika', char: 'vika.png', title: 'Лучшая девочка', type: 'image', req: 500000, reqType: 'total' }
 ];
 
+const BACKGROUNDS = [
+  { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0 },
+  { id: 'night', title: 'Полночь', class: 'bg-night', price: 50 },
+  { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150 },
+  { id: 'space', title: 'Космос', class: 'bg-space', price: 500 }
+];
+
 const ACHIEVEMENTS = [
-  { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
-  { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
-  { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
-  { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
-  { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
-  { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
-  { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
-  { id: 't15k', icon: '🧸', title: 'Прелесть', desc: '15,000 очков в сумме', req: 15000, type: 'total' },
-  { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50,000 очков в сумме', req: 50000, type: 'total' },
-  { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100,000 очков в сумме', req: 100000, type: 'total' },
-  { id: 't250k', icon: '🌈', title: 'Волшебная', desc: '250,000 очков в сумме', req: 250000, type: 'total' },
-  { id: 't500k', icon: '👑', title: 'Моя Вселенная', desc: '500,000 очков в сумме', req: 500000, type: 'total' }
+  { id: 'b500', icon: '🌙', title: 'Высокий полет', desc: '500 метров за раз', req: 500, type: 'best' },
+  { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100к очков в сумме', req: 100000, type: 'total' },
+  { id: 'c1000', icon: '💰', title: 'Богатая', desc: 'Собрать 1000 монет', req: 1000, type: 'coins' }
 ];
 
-const COMPLIMENTS = [
-  "Не расстраивайся, ты умничка! 💕",
-  "Ты моё солнышко, всё получится! ☀️",
-  "Для меня ты всегда номер один! 👑",
-  "Ты прыгаешь просто чудесно! ✨",
-  "Моя талантливая девочка, люблю тебя! 🌸",
-  "Ты самая лучшая, помни об этом! ❤️",
-  "Твой рекорд скоро падет, я верю! 🌙"
-];
-
-// СОСТОЯНИЕ
-let score = 0; // Итоговый счет (Высота + Бонусы)
-let currentHeightScore = 0; // Только высота
-let bonusScore = 0; // Только бонусы (звезды)
-
+// ===================== СОСТОЯНИЕ =====================
+let score = 0, currentH = 0, bonusS = 0;
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
+let coins = parseInt(localStorage.getItem('hj_coins') || '0');
 let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
 let currentSkin = localStorage.getItem('hj_skin') || 'red';
+let currentBg = localStorage.getItem('hj_bg') || 'default';
+let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 
 let gameState = 'menu';
-let cameraY = 0;
-let player, platforms, boosts, floatingTexts;
-let tilt = 0;
+let cameraY = 0, tilt = 0;
+let player, platforms, items, floatingTexts;
+let rocketState = 0; // 0: нет, 1: в большой ракете, 2: ракета отброшена (летит сам)
 let rocketTimer = 0, magnetTimer = 0;
-let vikaImg = new Image(); vikaImg.src = 'vika.png';
 
-// ===================== ЛОГИКА =====================
+// ===================== ЯДРО =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -296,73 +310,77 @@ window.addEventListener('resize', resize);
 resize();
 
 window.addEventListener('deviceorientation', e => {
-  if (e.gamma !== null) tilt = Math.max(-1, Math.min(1, e.gamma / 25));
+  if (e.gamma !== null) tilt = Math.max(-1, Math.min(1, e.gamma / 22));
 });
 
 function startGame() {
-  score = 0;
-  currentHeightScore = 0;
-  bonusScore = 0;
-  cameraY = 0;
-  rocketTimer = 0;
-  magnetTimer = 0;
-  platforms = [];
-  boosts = [];
-  floatingTexts = [];
+  score = 0; currentH = 0; bonusS = 0; cameraY = 0;
+  rocketTimer = 0; magnetTimer = 0; rocketState = 0;
+  platforms = []; items = []; floatingTexts = [];
   
-  player = {
-    x: canvas.width / 2 - 20,
-    y: canvas.height - 150,
-    w: 40, h: 40,
-    vx: 0, vy: JUMP_FORCE
-  };
+  player = { x: canvas.width/2 - 20, y: canvas.height - 150, w: 40, h: 40, vx: 0, vy: JUMP_FORCE };
 
-  platforms.push({ x: canvas.width / 2 - PLAT_W / 2, y: canvas.height - 100, type: PT.NORMAL, used: false, opacity: 1, side: 0, speed: 0 });
+  platforms.push({ x: canvas.width/2 - PLAT_W/2, y: canvas.height - 100, type: PT.NORMAL, opacity: 1 });
 
-  for (let i = 0; i < 15; i++) {
-    spawnPlatform(canvas.height - 200 - (i * 85));
-  }
+  for (let i = 0; i < 15; i++) spawnPlatform(canvas.height - 200 - (i * 85));
 
   gameState = 'playing';
+  document.body.className = BACKGROUNDS.find(b => b.id === currentBg).class;
   showScreen('none');
   document.getElementById('hud').style.display = 'block';
+  document.getElementById('coin-hud').style.display = 'flex';
   updateHUD();
 }
 
 function spawnPlatform(y) {
   const x = Math.random() * (canvas.width - PLAT_W - 20) + 10;
   let type = PT.NORMAL;
-  const roll = Math.random();
-
-  if (currentHeightScore > 100) {
+  if (currentH > 100) {
+    const roll = Math.random();
     if (roll < 0.2) type = PT.LIFT;
-    else if (roll < 0.35) type = PT.FRAGILE;
-    else if (roll < 0.45) type = PT.LOOSE;
+    else if (roll < 0.3) type = PT.FRAGILE;
+    else if (roll < 0.4) type = PT.LOOSE;
   }
-  if (Math.random() < 0.07) type = PT.STAR;
+  if (Math.random() < 0.08) type = PT.STAR;
 
-  const newPlat = { 
-    x, y, type, used: false, opacity: 1, 
-    side: Math.random() < 0.5 ? 1 : -1,
-    speed: 1.5 + Math.random() * 1.5
-  };
-  platforms.push(newPlat);
+  const p = { x, y, type, used: false, opacity: 1, side: Math.random() < 0.5 ? 1 : -1, speed: 1.5 + Math.random() };
+  platforms.push(p);
 
-  if (currentHeightScore > 50 && Math.random() < 0.1) {
-    boosts.push({ 
-      parent: newPlat, offX: PLAT_W/2 - 12, offY: -25, 
-      type: Math.random() < 0.6 ? BT.SPRING : (Math.random() < 0.5 ? BT.ROCKET : BT.MAGNET), 
-      active: true, x: 0, y: 0 
-    });
+  // Предметы
+  const itemRoll = Math.random();
+  if (itemRoll < 0.15) {
+    let itype = BT.COIN;
+    if (Math.random() < 0.3) {
+      const bRoll = Math.random();
+      if (bRoll < 0.4) itype = BT.SPRING;
+      else if (bRoll < 0.7) itype = BT.BIGSPRING;
+      else if (bRoll < 0.85) itype = BT.ROCKET;
+      else itype = BT.MAGNET;
+    }
+    items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -30, type: itype, active: true, state: 1 });
+  }
+
+  // Черные дыры (выше 300 очков)
+  if (currentH > 300 && Math.random() < 0.04) {
+    items.push({ x: Math.random() * (canvas.width - 60), y: y - 100, type: BT.BLACKHOLE, active: true });
   }
 }
 
 function update() {
   if (gameState !== 'playing') return;
 
-  player.vx = tilt * 9;
-  if (!rocketTimer) player.vy += GRAVITY;
-  else { player.vy = -12; rocketTimer--; }
+  player.vx = tilt * 10;
+  if (rocketState === 1) {
+    player.vy = -15;
+    rocketTimer--;
+    if (rocketTimer < 60) rocketState = 2; // Переход в свободный полет
+  } else if (rocketState === 2) {
+    player.vy = -10;
+    rocketTimer--;
+    if (rocketTimer <= 0) rocketState = 0;
+  } else {
+    player.vy += GRAVITY;
+  }
 
   player.x += player.vx;
   player.y += player.vy;
@@ -370,159 +388,180 @@ function update() {
   if (player.x > canvas.width) player.x = -player.w;
   if (player.x < -player.w) player.x = canvas.width;
 
-  if (player.y < cameraY + canvas.height * 0.45) {
-    cameraY = player.y - canvas.height * 0.45;
-  }
+  if (player.y < cameraY + canvas.height * 0.4) cameraY = player.y - canvas.height * 0.4;
 
-  // РАСЧЕТ ОЧКОВ: Исправлено, чтобы бонусы не мешали высоте
   let h = Math.floor(Math.abs(cameraY) / 15);
-  if (h > currentHeightScore) {
-    currentHeightScore = h;
-  }
-  
-  score = currentHeightScore + bonusScore;
+  if (h > currentH) currentH = h;
+  score = currentH + bonusS;
   updateHUD();
-  checkAchievements();
 
   platforms.forEach(p => {
     if (p.type === PT.LIFT) {
       p.x += p.side * p.speed;
       if (p.x < 5 || p.x > canvas.width - PLAT_W - 5) p.side *= -1;
     }
-    if (p.used) {
-      if (p.type === PT.FRAGILE) p.opacity -= 0.04;
-      if (p.type === PT.LOOSE) p.y += 8;
-    }
+    if (p.used && p.type === PT.FRAGILE) p.opacity -= 0.04;
+    if (p.used && p.type === PT.LOOSE) p.y += 10;
 
-    if (player.vy > 0 && p.opacity > 0.3 &&
+    if (player.vy > 0 && p.opacity > 0.5 &&
         player.x + 10 < p.x + PLAT_W && player.x + player.w - 10 > p.x && 
-        player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy + 5) {
-      
+        player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy) {
       player.y = p.y - player.h;
       player.vy = JUMP_FORCE;
+      if (p.type === PT.STAR && !p.used) addBonus(50, p.x + PLAT_W/2, p.y);
+      p.used = true;
+    }
+  });
 
-      if (p.type === PT.STAR && !p.used) {
-        p.used = true;
-        addBonus(50, p.x + PLAT_W/2, p.y);
-      } else {
-        p.used = true;
+  items.forEach(it => {
+    if (!it.active) return;
+    
+    // Позиционирование предметов на платформе
+    if (it.parent) {
+      it.x = it.parent.x + it.offX;
+      it.y = it.parent.y + it.offY;
+    }
+
+    // Магнит притягивает монетки
+    if (magnetTimer > 0 && it.type === BT.COIN) {
+      let dx = player.x - it.x, dy = player.y - it.y;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 200) {
+        it.x += dx * 0.15; it.y += dy * 0.15;
+        if (it.parent) it.parent = null; // Отрываем от платформы
       }
     }
-  });
 
-  boosts.forEach(b => {
-    b.x = b.parent.x + b.offX;
-    b.y = b.parent.y + b.offY;
-    if (b.active && player.x < b.x + 30 && player.x + player.w > b.x && 
-        player.y < b.y + 30 && player.y + player.h > b.y) {
-      b.active = false;
-      if (b.type === BT.SPRING) player.vy = SPRING_FORCE;
-      if (b.type === BT.ROCKET) rocketTimer = 180;
-      if (b.type === BT.MAGNET) magnetTimer = 500;
+    // Коллизия
+    let hitW = it.type === BT.BLACKHOLE ? 60 : 30;
+    if (player.x < it.x + hitW && player.x + player.w > it.x && 
+        player.y < it.y + hitW && player.y + player.h > it.y) {
+      
+      handleItemPickup(it);
     }
   });
+
+  if (magnetTimer > 0) magnetTimer--;
 
   floatingTexts.forEach((t, i) => {
     t.y -= 2; t.life -= 0.02;
     if (t.life <= 0) floatingTexts.splice(i, 1);
   });
 
-  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0);
-  boosts = boosts.filter(b => b.y - cameraY < canvas.height + 100 && b.active);
+  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0.1);
+  items = items.filter(it => it.active && it.y - cameraY < canvas.height + 100);
   
-  if (platforms.length < 18) {
-    spawnPlatform(platforms[platforms.length - 1].y - 85);
+  if (platforms.length < 18) spawnPlatform(platforms[platforms.length-1].y - 85);
+  if (player.y - cameraY > canvas.height + 100) endGame("Упала в объятия гравитации... 💕");
+}
+
+function handleItemPickup(it) {
+  switch(it.type) {
+    case BT.COIN:
+      it.active = false; coins++; updateHUD();
+      break;
+    case BT.SPRING:
+    case BT.BIGSPRING:
+      if (player.vy > 0) { // Только если падаем на пружину
+        player.vy = it.type === BT.SPRING ? -18 : -25;
+        it.state = 2; // Пружина отжата
+        setTimeout(() => it.active = false, 500);
+      }
+      break;
+    case BT.ROCKET:
+      it.active = false; rocketState = 1; rocketTimer = 220;
+      break;
+    case BT.MAGNET:
+      it.active = false; magnetTimer = 500;
+      break;
+    case BT.BLACKHOLE:
+      endGame("Черная дыра оказалась сильнее... 🌌");
+      break;
   }
-
-  if (player.y - cameraY > canvas.height + 100) endGame();
 }
 
-function addBonus(pts, x, y) {
-  bonusScore += pts;
-  score = currentHeightScore + bonusScore;
-  updateHUD();
-  floatingTexts.push({ x, y, text: `+${pts} 💕`, life: 1 });
-}
-
-function endGame() {
+function endGame(msg) {
   gameState = 'gameover';
   totalScore += score;
   localStorage.setItem('hj_total', totalScore);
+  localStorage.setItem('hj_coins', coins);
   if (score > bestScore) {
     bestScore = score;
     localStorage.setItem('hj_best', bestScore);
   }
-  checkAchievements(); 
-  
-  document.getElementById('go-title').textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
-  document.getElementById('go-score-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
-  document.getElementById('hud').style.display = 'none';
+  checkAchievements();
+  document.getElementById('go-msg').textContent = msg;
   showScreen('gameover-screen');
 }
 
-// ===================== РЕНДЕР =====================
+// ===================== ОТРИСОВКА =====================
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   if (gameState === 'playing' || gameState === 'gameover') {
+    
+    // Платформы
     platforms.forEach(p => {
-      ctx.save();
-      ctx.globalAlpha = p.opacity;
-      let color = '#ff5fa0';
-      if (p.type === PT.LIFT) color = '#4facfe';
-      if (p.type === PT.FRAGILE) color = '#a18cd1';
-      if (p.type === PT.LOOSE) color = '#f093fb';
-      if (p.type === PT.STAR) color = p.used ? '#555' : '#ffd700';
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8);
-      ctx.fill();
-      if (p.type === PT.STAR && !p.used) {
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 12px Nunito';
-        ctx.fillText('⭐', p.x + PLAT_W/2 - 6, p.y - cameraY + 12);
+      ctx.save(); ctx.globalAlpha = p.opacity;
+      let col = ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'][p.type];
+      if (p.type === PT.STAR && p.used) col = '#555';
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8); ctx.fill();
+      ctx.restore();
+    });
+
+    // Предметы
+    items.forEach(it => {
+      let y = it.y - cameraY;
+      ctx.globalAlpha = 1;
+      if (it.type === BT.COIN) {
+        ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(it.x + 15, y + 15, 10, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Nunito'; ctx.fillText('$', it.x+11, y+19);
+      } else if (it.type === BT.BLACKHOLE) {
+        ctx.drawImage(IMAGES.blackhole, it.x, y, 70, 70);
+      } else if (it.type === BT.SPRING) {
+        ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 30, 30);
+      } else if (it.type === BT.BIGSPRING) {
+        ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 35, 35);
+      } else if (it.type === BT.ROCKET) {
+        ctx.drawImage(IMAGES.rocket, it.x, y, 30, 30);
+      } else if (it.type === BT.MAGNET) {
+        ctx.drawImage(IMAGES.magnet, it.x, y, 30, 30);
       }
-      ctx.restore();
     });
 
-    boosts.forEach(b => {
-      if (!b.active) return;
-      ctx.globalAlpha = 1.0; 
-      let emoji = (b.type === BT.SPRING) ? '🌀' : (b.type === BT.ROCKET ? '🚀' : '🧲');
-      ctx.font = '26px serif';
-      ctx.fillText(emoji, b.x, b.y - cameraY + 22);
-    });
+    // ПЕРСОНАЖ
+    ctx.globalAlpha = 1;
+    let px = player.x + player.w/2, py = player.y - cameraY + player.h/2;
 
-    ctx.globalAlpha = 1.0;
-    const skin = SKINS.find(s => s.id === currentSkin);
-    
-    if (skin.type === 'emoji') {
-      ctx.font = '42px serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(skin.char, player.x + player.w/2, player.y - cameraY + 35);
+    if (rocketState === 1) {
+      // БОЛЬШАЯ РАКЕТА
+      ctx.drawImage(IMAGES.bigrocket, player.x - 44, player.y - cameraY - 70, 128, 185);
+      // ПЕРСОНАЖ В ИЛЛЮМИНАТОРЕ (центр по картинке)
+      drawCharacter(px, py - 18, 0.45); // Уменьшен для иллюминатора
     } else {
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(player.x + player.w/2, player.y - cameraY + player.h/2, 22, 0, Math.PI*2);
-      ctx.clip();
-      ctx.drawImage(vikaImg, player.x - 2, player.y - cameraY - 2, 44, 44);
-      ctx.restore();
-    }
-    
-    if (rocketTimer > 0) {
-        ctx.font = '24px serif';
-        ctx.fillText('🔥', player.x + player.w/2 - 12, player.y - cameraY + 65);
+      drawCharacter(px, py, 1);
     }
 
     floatingTexts.forEach(t => {
-      ctx.globalAlpha = t.life;
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 22px Nunito';
+      ctx.globalAlpha = t.life; ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Nunito';
       ctx.fillText(t.text, t.x - 20, t.y - cameraY);
     });
-    ctx.globalAlpha = 1.0;
   }
   requestAnimationFrame(draw);
+}
+
+function drawCharacter(x, y, scale) {
+  const skin = SKINS.find(s => s.id === currentSkin);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  if (skin.type === 'emoji') {
+    ctx.font = '42px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15);
+  } else {
+    ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip();
+    ctx.drawImage(IMAGES.vika, -22, -22, 44, 44);
+  }
+  ctx.restore();
 }
 
 // ===================== ИНТЕРФЕЙС =====================
@@ -530,79 +569,79 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   if (id !== 'none') document.getElementById(id).style.display = 'flex';
   if (id === 'skins-screen') renderSkins();
-  if (id === 'ach-screen') renderAchievements();
+  if (id === 'bg-screen') renderBgs();
+  if (id === 'ach-screen') renderAchs();
 }
 
 function updateHUD() {
   document.getElementById('score-val').textContent = score;
-  document.getElementById('total-val').textContent = `всего: ${totalScore.toLocaleString()}`;
+  document.getElementById('best-val').textContent = bestScore;
+  document.getElementById('total-val').textContent = totalScore.toLocaleString();
+  document.getElementById('coin-val').textContent = coins;
 }
 
 function renderSkins() {
-  const container = document.getElementById('skins-grid');
-  container.innerHTML = '';
+  const container = document.getElementById('skins-grid'); container.innerHTML = '';
   SKINS.forEach(s => {
-    let locked = false;
-    if (s.reqType === 'best' && bestScore < s.req) locked = true;
-    if (s.reqType === 'total' && totalScore < s.req) locked = true;
-    
+    let locked = (s.reqType === 'best' && bestScore < s.req) || (s.reqType === 'total' && totalScore < s.req);
     const div = document.createElement('div');
-    div.className = `skin-item ${locked ? 'locked' : ''} ${currentSkin === s.id ? 'selected' : ''}`;
-    
-    let displayName = locked ? "???" : s.title;
-    let displayIcon = locked ? "🔒" : (s.type === 'emoji' ? s.char : '🖼️');
+    div.className = `item-card ${locked ? 'locked' : ''} ${currentSkin === s.id ? 'selected' : ''}`;
+    div.innerHTML = `<div class="item-icon">${locked ? '🔒' : (s.type==='emoji'?s.char:'🖼️')}</div>
+                     <div class="item-title">${locked ? '???' : s.title}</div>`;
+    if (!locked) div.onclick = () => { currentSkin = s.id; localStorage.setItem('hj_skin', s.id); renderSkins(); };
+    container.appendChild(div);
+  });
+}
 
-    div.innerHTML = `
-      <div class="skin-icon">${displayIcon}</div>
-      <div class="skin-title">${displayName}</div>
-      <div class="skin-price">${locked ? 'закрыто' : 'получено'}</div>
-    `;
-    if (!locked) div.onclick = () => { 
-      currentSkin = s.id; 
-      localStorage.setItem('hj_skin', s.id); 
-      renderSkins(); 
+function renderBgs() {
+  const container = document.getElementById('bg-grid'); container.innerHTML = '';
+  BACKGROUNDS.forEach(b => {
+    let owned = ownedBgs.includes(b.id);
+    const div = document.createElement('div');
+    div.className = `item-card ${currentBg === b.id ? 'selected' : ''}`;
+    div.innerHTML = `<div class="item-icon">🖼️</div>
+                     <div class="item-title">${b.title}</div>
+                     <div class="item-price">${owned ? 'Получено' : b.price + ' 💰'}</div>`;
+    div.onclick = () => {
+      if (owned) {
+        currentBg = b.id; localStorage.setItem('hj_bg', b.id);
+      } else if (coins >= b.price) {
+        coins -= b.price; ownedBgs.push(b.id);
+        localStorage.setItem('hj_coins', coins);
+        localStorage.setItem('hj_owned_bgs', JSON.stringify(ownedBgs));
+      }
+      renderBgs(); updateHUD();
     };
     container.appendChild(div);
   });
 }
 
-function renderAchievements() {
-  const container = document.getElementById('ach-list');
-  container.innerHTML = '';
+function renderAchs() {
+  const container = document.getElementById('ach-list'); container.innerHTML = '';
   ACHIEVEMENTS.forEach(a => {
     const unlocked = unlockedAchs.includes(a.id);
-    const div = document.createElement('div');
-    div.className = `ach-item ${unlocked ? 'unlocked' : ''}`;
-    div.innerHTML = `
-      <div class="ach-icon">${unlocked ? a.icon : '❓'}</div>
-      <div class="ach-info">
-        <b>${unlocked ? a.title : '???'}</b>
-        <span>${unlocked ? a.desc : 'Секретное достижение'}</span>
-      </div>
-    `;
-    container.appendChild(div);
+    container.innerHTML += `<div style="margin-bottom:10px; opacity:${unlocked?1:0.4}">
+      <b>${a.icon} ${unlocked?a.title:'???'}</b><br><small>${unlocked?a.desc:'Секрет'}</small></div>`;
   });
 }
 
 function checkAchievements() {
   ACHIEVEMENTS.forEach(a => {
     if (unlockedAchs.includes(a.id)) return;
-    let pass = false;
-    if (a.type === 'best' && score >= a.req) pass = true;
-    if (a.type === 'total' && totalScore >= a.req) pass = true;
-    if (pass) {
-      unlockedAchs.push(a.id);
-      localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
+    if ((a.type==='best'&&score>=a.req)||(a.type==='total'&&totalScore>=a.req)||(a.type==='coins'&&coins>=a.req)) {
+      unlockedAchs.push(a.id); localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
       showToast(a);
     }
   });
 }
 
+function addBonus(pts, x, y) {
+  bonusS += pts; floatingTexts.push({ x, y, text: `+${pts} 💕`, life: 1 });
+}
+
 function showToast(a) {
-  const toast = document.getElementById('ach-toast');
-  toast.innerHTML = `<b>Новое достижение! ${a.icon}</b><br>${a.title}`;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3500);
+  const t = document.getElementById('ach-toast'); t.innerHTML = `🏆 ${a.title}`; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 setInterval(update, 1000/60);
