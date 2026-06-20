@@ -10,11 +10,14 @@
 
 <div id="desktop-msg">
     <h1>📱💕</h1>
-    <p>Зайди с телефона, чтобы прыгать наклонами!</p>
+    <p>Играй на телефоне, чтобы использовать наклоны!</p>
 </div>
 
 <div id="game-wrapper">
+    <!-- Декорации фона -->
+    <div class="bg-decor sun-round"></div>
     <div class="bg-decor moon"></div>
+    <div class="bg-decor clouds"></div>
     <div class="bg-decor stars"></div>
 
     <div id="hud" style="display:none">
@@ -26,13 +29,13 @@
         💰 <span id="coin-val">0</span>
     </div>
 
+    <!-- Полоска магнита (теперь точно видна) -->
     <div id="magnet-bar-container" style="display:none">
         <div id="magnet-bar"></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
-    <!-- ЭКРАНЫ -->
     <div class="screen" id="menu-screen">
         <h1>Heart Jump</h1>
         <div class="subtitle">Для самой лучшей девочки 💕</div>
