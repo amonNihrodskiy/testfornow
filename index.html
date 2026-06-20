@@ -1,637 +1,75 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Heart Jump 💕</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
-
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-body {
-  font-family: 'Nunito', sans-serif;
-  background: #1a0010;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  overflow: hidden;
-  color: #fff;
-}
-
-/* Обертка для мобилки */
-#game-wrapper {
-  position: relative;
-  width: 100vw;
-  height: 100dvh;
-  max-width: 430px;
-  overflow: hidden;
-  box-shadow: 0 0 50px rgba(0,0,0,0.8);
-}
-
-/* Фоны */
-.bg-default { background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%); }
-.bg-night { background: linear-gradient(180deg, #020111 0%, #191621 100%); }
-.bg-sunset { background: linear-gradient(180deg, #452c63 0%, #f77062 100%); }
-.bg-space { background: #000 url('https://www.transparenttextures.com/patterns/stardust.png'); }
-
-/* HUD сверху */
-#hud {
-  position: absolute;
-  top: 10px; left: 10px;
-  z-index: 10;
-  pointer-events: none;
-}
-#score-val { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 2px 10px rgba(255,105,180,0.8); }
-.hud-stats { font-size: 0.75rem; color: #ff9ec8; font-weight: 700; opacity: 0.9; margin-top: -5px; }
-
-#coin-hud {
-  position: absolute;
-  top: 12px; right: 12px;
-  background: rgba(0,0,0,0.4);
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-weight: 900;
-  color: #ffd700;
-  display: flex;
-  align-items: center; gap: 5px;
-  z-index: 10;
-}
-
-/* Сообщение для ПК */
-#desktop-msg {
-  display: none;
-  position: fixed; inset: 0; background: #1a0010;
-  z-index: 100; flex-direction: column; align-items: center; justify-content: center;
-}
-@media (min-width: 650px) { #desktop-msg { display: flex; } }
-
-canvas { display: block; width: 100%; height: 100%; }
-
-/* Экраны меню */
-.screen {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 20;
-  background: rgba(26, 0, 16, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  text-align: center;
-}
-
-h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bottom: 5px; }
-.subtitle { color: #ff9ec8; margin-bottom: 25px; font-size: 1rem; }
-
-.btn {
-  background: linear-gradient(135deg, #ff5fa0, #e0105a);
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 50px;
-  padding: 12px 35px;
-  margin: 8px;
-  cursor: pointer;
-  width: 230px;
-}
-.btn.secondary { background: rgba(255,255,255,0.1); border: 2px solid #ff5fa0; color: #ff9ec8; }
-
-/* Сетки магазинов */
-.scroll-grid {
-  width: 100%;
-  max-height: 55dvh;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 10px;
-}
-
-.card {
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid transparent;
-  border-radius: 15px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: 0.2s;
-}
-.card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
-.card.locked { opacity: 0.5; }
-.card-icon { font-size: 1.8rem; margin-bottom: 5px; height: 45px; display: flex; align-items: center; }
-.card-title { font-size: 0.7rem; font-weight: bold; color: #ffcce6; }
-.card-price { font-size: 0.75rem; color: #ffd700; font-weight: 900; }
-
-/* Список достижений */
-.ach-list { width: 100%; max-height: 55dvh; overflow-y: auto; text-align: left; }
-.ach-item {
-  background: rgba(255,255,255,0.05);
-  margin-bottom: 8px; border-radius: 10px; padding: 10px;
-  display: flex; align-items: center; gap: 10px;
-  border-left: 4px solid #444;
-}
-.ach-item.unlocked { border-left-color: #ff5fa0; background: rgba(255,95,160,0.1); }
-
-#ach-toast {
-  position: absolute;
-  top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
-  background: #e0105a; padding: 12px 25px; border-radius: 15px;
-  z-index: 100; opacity: 0; transition: 0.5s; pointer-events: none;
-}
-#ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Heart Jump 💕</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-default">
 
 <div id="desktop-msg">
-  <h1>📱💕</h1>
-  <p>Зайди с телефона, чтобы играть!</p>
+    <h1>📱💕</h1>
+    <p>Играй на телефоне, чтобы использовать наклоны!</p>
 </div>
 
 <div id="game-wrapper">
-  <div id="hud" style="display:none">
-    <div id="score-val">0</div>
-    <div class="hud-stats">Рекорд: <span id="best-val">0</span> | Всего: <span id="sum-val">0</span></div>
-  </div>
+    <!-- HUD -->
+    <div id="hud" style="display:none">
+        <div id="score-val">0</div>
+        <div class="hud-stats">Рекорд: <span id="best-val">0</span> | Всего: <span id="sum-val">0</span></div>
+    </div>
 
-  <div id="coin-hud" style="display:none">
-    💰 <span id="coin-val">0</span>
-  </div>
+    <div id="coin-hud" style="display:none">
+        💰 <span id="coin-val">0</span>
+    </div>
 
-  <canvas id="gameCanvas"></canvas>
+    <!-- Полоска магнита -->
+    <div id="magnet-bar-container" style="display:none">
+        <div id="magnet-bar"></div>
+    </div>
 
-  <!-- ЭКРАНЫ -->
-  <div class="screen" id="menu-screen">
-    <h1>Heart Jump</h1>
-    <div class="subtitle">Лети выше всех, любимая! 💕</div>
-    <button class="btn" onclick="startGame()">Новая игра</button>
-    <button class="btn secondary" onclick="showScreen('skins-screen')">Персонажи</button>
-    <button class="btn secondary" onclick="showScreen('bg-screen')">Фоны</button>
-    <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
-  </div>
+    <canvas id="gameCanvas"></canvas>
 
-  <div class="screen" id="skins-screen" style="display:none">
-    <h1>Персонажи</h1>
-    <div class="scroll-grid" id="skins-grid"></div>
-    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
-  </div>
+    <!-- ЭКРАНЫ -->
+    <div class="screen" id="menu-screen">
+        <h1>Heart Jump</h1>
+        <div class="subtitle">Для самой лучшей девочки 💕</div>
+        <button class="btn" onclick="startGame()">Новая игра</button>
+        <button class="btn secondary" onclick="showScreen('skins-screen')">Персонажи</button>
+        <button class="btn secondary" onclick="showScreen('bg-screen')">Фоны</button>
+        <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
+    </div>
 
-  <div class="screen" id="bg-screen" style="display:none">
-    <h1>Магазин фонов</h1>
-    <div class="scroll-grid" id="bg-grid"></div>
-    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
-  </div>
+    <div class="screen" id="skins-screen" style="display:none">
+        <h1>Персонажи</h1>
+        <div class="scroll-grid" id="skins-grid"></div>
+        <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
+    </div>
 
-  <div class="screen" id="ach-screen" style="display:none">
-    <h1>Достижения</h1>
-    <div class="ach-list" id="ach-list"></div>
-    <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
-  </div>
+    <div class="screen" id="bg-screen">
+        <div class="shop-header">Баланс: <span id="shop-coin-val">0</span> 💰</div>
+        <h1>Фоны</h1>
+        <div class="scroll-grid" id="bg-grid"></div>
+        <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
+    </div>
 
-  <div class="screen" id="gameover-screen" style="display:none">
-    <h1 id="go-title">Упс!</h1>
-    <div class="subtitle" id="go-msg"></div>
-    <button class="btn" onclick="startGame()">Еще раз</button>
-    <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
-  </div>
+    <div class="screen" id="ach-screen" style="display:none">
+        <h1>Достижения</h1>
+        <div class="ach-list" id="ach-list"></div>
+        <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
+    </div>
 
-  <div id="ach-toast"></div>
+    <div class="screen" id="gameover-screen" style="display:none">
+        <h1 id="go-title">Упс!</h1>
+        <div class="subtitle" id="go-msg"></div>
+        <button class="btn" onclick="startGame()">Еще раз</button>
+        <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
+    </div>
+
+    <div id="ach-toast"></div>
 </div>
 
-<script>
-// ===================== КОНФИГУРАЦИЯ ИЗОБРАЖЕНИЙ =====================
-const IMAGES = {};
-const UI_IMAGES = {
-  blackhole: 'image/blackhole.png',
-  rocket: 'image/rocet.png',
-  bigrocket: 'image/bigrocet.png',
-  spring1: 'image/spring1.png',
-  spring2: 'image/spring2.png',
-  bigspring1: 'image/bigspring1.png',
-  bigspring2: 'image/bigspring2.png',
-  vika: 'vika.png'
-};
-
-function loadImages() {
-  Object.entries(UI_IMAGES).forEach(([name, src]) => {
-    const img = new Image();
-    img.src = src;
-    IMAGES[name] = img;
-  });
-}
-loadImages();
-
-// ===================== ДАННЫЕ =====================
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-const PLAT_W = 75, PLAT_H = 15;
-const GRAVITY = 0.38, JUMP_FORCE = -12.5;
-
-const PT = { NORMAL: 0, LOOSE: 1, FRAGILE: 2, LIFT: 3, STAR: 4 };
-const BT = { SPRING: 0, BIGSPRING: 1, ROCKET: 2, MAGNET: 3, COIN: 4, BLACKHOLE: 5 };
-
-const SKINS = [
-  { id: 'red', char: '❤️', title: 'Классика', type: 'emoji', req: 0 },
-  { id: 'pink', char: '💕', title: 'Нежность', type: 'emoji', req: 500, reqType: 'best' },
-  { id: 'cat', char: '😻', title: 'Котик', type: 'emoji', req: 5000, reqType: 'total' },
-  { id: 'sun', char: '☀️', title: 'Солнышко', type: 'emoji', req: 20000, reqType: 'total' },
-  { id: 'queen', char: '👑', title: 'Королева', type: 'emoji', req: 100000, reqType: 'total' },
-  { id: 'vika', char: 'vika.png', title: 'Лучшая девочка', type: 'image', req: 500000, reqType: 'total' }
-];
-
-const BACKGROUNDS = [
-  { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0 },
-  { id: 'night', title: 'Полночь', class: 'bg-night', price: 50 },
-  { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150 },
-  { id: 'space', title: 'Космос', class: 'bg-space', price: 500 }
-];
-
-const ACHIEVEMENTS = [
-  { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за полет', req: 100, type: 'best' },
-  { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за полет', req: 500, type: 'best' },
-  { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50к очков всего', req: 50000, type: 'total' },
-  { id: 't500k', icon: '👑', title: 'Вселенная', desc: 'Собрать 500к очков', req: 500000, type: 'total' },
-  { id: 'c100', icon: '💰', title: 'Копилка', desc: 'Собрать 100 монет', req: 100, type: 'coins' }
-];
-
-// ===================== СОСТОЯНИЕ =====================
-let score = 0, currentH = 0, bonusS = 0;
-let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
-let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
-let coins = parseInt(localStorage.getItem('hj_coins') || '0');
-let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
-let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
-let currentSkin = localStorage.getItem('hj_skin') || 'red';
-let currentBg = localStorage.getItem('hj_bg') || 'default';
-
-let gameState = 'menu';
-let cameraY = 0, tilt = 0;
-let player, platforms, items, floatingTexts;
-let rocketActive = false, rocketTimer = 0, rocketType = 0; // 0: в ракете, 1: ракета отброшена
-let magnetTimer = 0;
-
-// ===================== ИГРОВОЙ ЦИКЛ =====================
-function resize() {
-  canvas.width = Math.min(window.innerWidth, 430);
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-window.addEventListener('deviceorientation', e => {
-  if (e.gamma !== null) tilt = Math.max(-1, Math.min(1, e.gamma / 22));
-});
-
-function startGame() {
-  score = 0; currentH = 0; bonusS = 0; cameraY = 0;
-  rocketActive = false; rocketTimer = 0; magnetTimer = 0;
-  platforms = []; items = []; floatingTexts = [];
-  
-  player = { x: canvas.width/2 - 20, y: canvas.height - 150, w: 40, h: 40, vx: 0, vy: JUMP_FORCE };
-
-  platforms.push({ x: canvas.width/2 - PLAT_W/2, y: canvas.height - 100, type: PT.NORMAL, opacity: 1, used: false });
-
-  for (let i = 0; i < 15; i++) spawnPlatform(canvas.height - 200 - (i * 85));
-
-  gameState = 'playing';
-  document.body.className = BACKGROUNDS.find(b => b.id === currentBg).class;
-  showScreen('none');
-  document.getElementById('hud').style.display = 'block';
-  document.getElementById('coin-hud').style.display = 'flex';
-  updateHUD();
-}
-
-function spawnPlatform(y) {
-  const x = Math.random() * (canvas.width - PLAT_W - 20) + 10;
-  let type = PT.NORMAL;
-  if (currentH > 100) {
-    const r = Math.random();
-    if (r < 0.15) type = PT.LIFT;
-    else if (r < 0.25) type = PT.FRAGILE;
-    else if (r < 0.35) type = PT.LOOSE;
-  }
-  if (Math.random() < 0.08) type = PT.STAR;
-
-  const p = { x, y, type, used: false, opacity: 1, side: Math.random() < 0.5 ? 1 : -1, speed: 1.5 + Math.random() };
-  platforms.push(p);
-
-  // Спавн предметов
-  if (Math.random() < 0.2) {
-    let itype = BT.COIN;
-    const itemRoll = Math.random();
-    if (itemRoll < 0.4) {
-      const bRoll = Math.random();
-      if (bRoll < 0.3) itype = BT.SPRING;
-      else if (bRoll < 0.6) itype = BT.BIGSPRING;
-      else if (bRoll < 0.8) itype = BT.ROCKET;
-      else itype = BT.MAGNET;
-    }
-    items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -32, type: itype, active: true, state: 1 });
-  }
-
-  // Черные дыры (после 300 метров)
-  if (currentH > 300 && Math.random() < 0.04) {
-    items.push({ x: Math.random() * (canvas.width - 60), y: y - 120, type: BT.BLACKHOLE, active: true });
-  }
-}
-
-function update() {
-  if (gameState !== 'playing') return;
-
-  player.vx = tilt * 10;
-  
-  if (rocketActive) {
-    player.vy = (rocketType === 0) ? -15 : -10;
-    rocketTimer--;
-    if (rocketTimer === 60) rocketType = 1; // "Отбрасываем" ракету
-    if (rocketTimer <= 0) rocketActive = false;
-  } else {
-    player.vy += GRAVITY;
-  }
-
-  player.x += player.vx;
-  player.y += player.vy;
-
-  // Бесконечный экран по бокам
-  if (player.x > canvas.width) player.x = -player.w;
-  if (player.x < -player.w) player.x = canvas.width;
-
-  // Камера
-  if (player.y < cameraY + canvas.height * 0.4) {
-    cameraY = player.y - canvas.height * 0.4;
-  }
-
-  // Очки
-  let h = Math.floor(Math.abs(cameraY) / 15);
-  if (h > currentH) currentH = h;
-  score = currentH + bonusS;
-  updateHUD();
-
-  // Обновление платформ
-  platforms.forEach(p => {
-    if (p.type === PT.LIFT) {
-      p.x += p.side * p.speed;
-      if (p.x < 5 || p.x > canvas.width - PLAT_W - 5) p.side *= -1;
-    }
-    if (p.used) {
-      if (p.type === PT.FRAGILE) p.opacity -= 0.05;
-      if (p.type === PT.LOOSE) p.y += 10;
-    }
-
-    // Коллизия (прыжок)
-    if (player.vy > 0 && p.opacity > 0.5 &&
-        player.x + 10 < p.x + PLAT_W && player.x + player.w - 10 > p.x && 
-        player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy) {
-      
-      player.y = p.y - player.h;
-      player.vy = JUMP_FORCE;
-      if (p.type === PT.STAR && !p.used) addBonus(50, p.x + PLAT_W/2, p.y, "+50 💕");
-      p.used = true;
-    }
-  });
-
-  // Обновление предметов
-  items.forEach(it => {
-    if (!it.active) return;
-
-    if (it.parent) { // Привязка к платформе
-      it.x = it.parent.x + it.offX;
-      it.y = it.parent.y + it.offY;
-    }
-
-    // Магнит
-    if (magnetTimer > 0 && it.type === BT.COIN) {
-      let dx = player.x - it.x, dy = (player.y - cameraY) - (it.y - cameraY);
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 250) {
-        it.parent = null;
-        it.x += dx * 0.2; it.y += dy * 0.2;
-      }
-    }
-
-    // Сбор
-    let hitW = (it.type === BT.BLACKHOLE) ? 60 : 35;
-    if (player.x < it.x + hitW && player.x + player.w > it.x && 
-        player.y < it.y + hitW && player.y + player.h > it.y) {
-      handlePickup(it);
-    }
-  });
-
-  if (magnetTimer > 0) magnetTimer--;
-
-  // Тексты
-  floatingTexts.forEach((t, i) => {
-    t.y -= 2; t.life -= 0.02;
-    if (t.life <= 0) floatingTexts.splice(i, 1);
-  });
-
-  // Очистка и спавн
-  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0.05);
-  items = items.filter(it => it.active && it.y - cameraY < canvas.height + 100);
-  if (platforms.length < 18) spawnPlatform(platforms[platforms.length-1].y - 85);
-
-  // Смерть
-  if (player.y - cameraY > canvas.height + 100) endGame("Упала в объятия гравитации... 💕");
-}
-
-function handlePickup(it) {
-  if (it.type === BT.BLACKHOLE) {
-    endGame("Черная дыра оказалась сильнее... 🌌");
-    return;
-  }
-
-  switch(it.type) {
-    case BT.COIN:
-      it.active = false; coins++; addBonus(0, it.x, it.y, "+1 💰"); break;
-    case BT.SPRING:
-      if (player.vy > 0) { player.vy = -18; it.state = 2; setTimeout(()=>it.active=false, 500); } break;
-    case BT.BIGSPRING:
-      if (player.vy > 0) { player.vy = -26; it.state = 2; setTimeout(()=>it.active=false, 500); } break;
-    case BT.ROCKET:
-      it.active = false; rocketActive = true; rocketTimer = 240; rocketType = 0; break;
-    case BT.MAGNET:
-      it.active = false; magnetTimer = 500; break;
-  }
-}
-
-function endGame(msg) {
-  gameState = 'gameover';
-  totalScore += score;
-  localStorage.setItem('hj_total', totalScore);
-  localStorage.setItem('hj_coins', coins);
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('hj_best', bestScore);
-  }
-  checkAchievements();
-  document.getElementById('go-msg').textContent = msg;
-  showScreen('gameover-screen');
-}
-
-// ===================== ОТРИСОВКА =====================
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (gameState === 'playing' || gameState === 'gameover') {
-    
-    // Платформы
-    platforms.forEach(p => {
-      ctx.save(); ctx.globalAlpha = p.opacity;
-      let col = ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'][p.type];
-      if (p.type === PT.STAR && p.used) col = '#555';
-      ctx.fillStyle = col;
-      ctx.beginPath(); ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8); ctx.fill();
-      ctx.restore();
-    });
-
-    // Предметы
-    items.forEach(it => {
-      let y = it.y - cameraY; ctx.globalAlpha = 1;
-      if (it.type === BT.COIN) {
-        ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(it.x + 15, y + 15, 12, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.font = '900 14px Nunito'; ctx.fillText('$', it.x+10, y+20);
-      } else if (it.type === BT.BLACKHOLE) {
-        ctx.drawImage(IMAGES.blackhole, it.x, y, 70, 70);
-      } else if (it.type === BT.SPRING) {
-        ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 35, 35);
-      } else if (it.type === BT.BIGSPRING) {
-        ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 40, 40);
-      } else if (it.type === BT.ROCKET) {
-        ctx.drawImage(IMAGES.rocket, it.x, y, 35, 35);
-      } else if (it.type === BT.MAGNET) {
-        ctx.font = '30px serif'; ctx.fillText('🧲', it.x, y + 30);
-      }
-    });
-
-    // ПЕРСОНАЖ
-    ctx.globalAlpha = 1.0;
-    let px = player.x + player.w/2, py = player.y - cameraY + player.h/2;
-
-    if (rocketActive && rocketType === 0) {
-      // Рисуем большую ракету
-      ctx.drawImage(IMAGES.bigrocket, player.x - 44, player.y - cameraY - 70, 128, 185);
-      // Персонаж в иллюминаторе (уменьшен)
-      drawCharacter(px, py - 18, 0.45);
-    } else {
-      drawCharacter(px, py, 1.0);
-    }
-
-    // Тексты (эффекты)
-    floatingTexts.forEach(t => {
-      ctx.globalAlpha = t.life; ctx.fillStyle = '#fff'; ctx.font = 'bold 22px Nunito';
-      ctx.fillText(t.text, t.x - 10, t.y - cameraY);
-    });
-  }
-  requestAnimationFrame(draw);
-}
-
-function drawCharacter(x, y, scale) {
-  ctx.save();
-  ctx.globalAlpha = 1.0; // Гарантируем видимость
-  ctx.translate(x, y);
-  ctx.scale(scale, scale);
-  const skin = SKINS.find(s => s.id === currentSkin);
-  if (skin.type === 'emoji') {
-    ctx.font = '45px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15);
-  } else {
-    ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip();
-    ctx.drawImage(IMAGES.vika, -22, -22, 44, 44);
-  }
-  ctx.restore();
-}
-
-// ===================== ИНТЕРФЕЙС =====================
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
-  if (id !== 'none') document.getElementById(id).style.display = 'flex';
-  if (id === 'skins-screen') renderList('skins-grid', SKINS, 'hj_skin');
-  if (id === 'bg-screen') renderList('bg-grid', BACKGROUNDS, 'hj_bg');
-  if (id === 'ach-screen') renderAchievements();
-}
-
-function updateHUD() {
-  document.getElementById('score-val').textContent = score;
-  document.getElementById('best-val').textContent = bestScore;
-  document.getElementById('sum-val').textContent = totalScore.toLocaleString();
-  document.getElementById('coin-val').textContent = coins;
-}
-
-function renderList(containerId, list, storageKey) {
-  const container = document.getElementById(containerId); container.innerHTML = '';
-  list.forEach(item => {
-    let locked = false;
-    if (item.reqType === 'best' && bestScore < item.req) locked = true;
-    if (item.reqType === 'total' && totalScore < item.req) locked = true;
-    
-    let owned = (containerId === 'bg-grid') ? ownedBgs.includes(item.id) : !locked;
-    
-    const div = document.createElement('div');
-    div.className = `card ${locked ? 'locked' : ''} ${(item.id === currentSkin || item.id === currentBg) ? 'selected' : ''}`;
-    
-    let icon = locked ? '🔒' : (item.type === 'image' ? '🖼️' : (item.char || '🖼️'));
-    let priceInfo = owned ? 'Получено' : (item.price + ' 💰');
-
-    div.innerHTML = `<div class="card-icon">${icon}</div>
-                     <div class="card-title">${locked ? '???' : item.title}</div>
-                     <div class="card-price">${priceInfo}</div>`;
-
-    div.onclick = () => {
-      if (containerId === 'skins-grid' && !locked) {
-        currentSkin = item.id; localStorage.setItem(storageKey, item.id);
-      } else if (containerId === 'bg-grid') {
-        if (owned) { currentBg = item.id; localStorage.setItem(storageKey, item.id); }
-        else if (coins >= item.price) {
-          coins -= item.price; ownedBgs.push(item.id);
-          localStorage.setItem('hj_coins', coins);
-          localStorage.setItem('hj_owned_bgs', JSON.stringify(ownedBgs));
-        }
-      }
-      renderList(containerId, list, storageKey); updateHUD();
-    };
-    container.appendChild(div);
-  });
-}
-
-function renderAchievements() {
-  const container = document.getElementById('ach-list'); container.innerHTML = '';
-  ACHIEVEMENTS.forEach(a => {
-    const unlocked = unlockedAchs.includes(a.id);
-    container.innerHTML += `<div class="ach-item ${unlocked?'unlocked':''}">
-      <div style="font-size:1.5rem">${unlocked ? a.icon : '❓'}</div>
-      <div><b>${unlocked ? a.title : '???'}</b><br><small>${unlocked ? a.desc : 'Секретное достижение'}</small></div>
-    </div>`;
-  });
-}
-
-function checkAchievements() {
-  ACHIEVEMENTS.forEach(a => {
-    if (unlockedAchs.includes(a.id)) return;
-    if ((a.type==='best'&&score>=a.req)||(a.type==='total'&&totalScore>=a.req)||(a.type==='coins'&&coins>=a.req)) {
-      unlockedAchs.push(a.id); localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
-      showToast(a);
-    }
-  });
-}
-
-function addBonus(pts, x, y, text) {
-  bonusS += pts; floatingTexts.push({ x, y, text, life: 1 });
-  updateHUD();
-}
-
-function showToast(a) {
-  const t = document.getElementById('ach-toast'); t.innerHTML = `🏆 <b>${a.title}</b>`; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-setInterval(update, 1000/60);
-draw();
-</script>
+<script src="game.js"></script>
 </body>
 </html>
