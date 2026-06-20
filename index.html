@@ -10,11 +10,10 @@
 
 <div id="desktop-msg">
     <h1>📱💕</h1>
-    <p>Играй на телефоне, чтобы использовать наклоны!</p>
+    <p>Зайди с телефона, чтобы прыгать наклонами!</p>
 </div>
 
 <div id="game-wrapper">
-    <!-- Элементы фона (звезды, луна и т.д. управляются через CSS классы body) -->
     <div class="bg-decor moon"></div>
     <div class="bg-decor stars"></div>
 
@@ -33,7 +32,7 @@
 
     <canvas id="gameCanvas"></canvas>
 
-    <!-- ГЛАВНОЕ МЕНЮ -->
+    <!-- ЭКРАНЫ -->
     <div class="screen" id="menu-screen">
         <h1>Heart Jump</h1>
         <div class="subtitle">Для самой лучшей девочки 💕</div>
@@ -43,31 +42,27 @@
         <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
     </div>
 
-    <!-- СКИНЫ -->
     <div class="screen" id="skins-screen" style="display:none">
         <h1>Персонажи</h1>
         <div class="scroll-grid" id="skins-grid"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
-    <!-- МАГАЗИН ФОНОВ (добавил style="display:none", чтобы не вылезал) -->
     <div class="screen" id="bg-screen" style="display:none">
-        <div class="shop-header">Баланс: <span id="shop-coin-val">0</span> 💰</div>
+        <div class="shop-header">Твои монетки: <span id="shop-coin-val">0</span> 💰</div>
         <h1>Магазин фонов</h1>
         <div class="scroll-grid" id="bg-grid"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
-    <!-- ДОСТИЖЕНИЯ -->
     <div class="screen" id="ach-screen" style="display:none">
         <h1>Достижения</h1>
         <div class="ach-list" id="ach-list"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
-    <!-- GAME OVER -->
     <div class="screen" id="gameover-screen" style="display:none">
-        <h1 id="go-title">Упс!</h1>
+        <h1 id="go-title">Не расстраивайся!</h1>
         <div class="subtitle" id="go-msg"></div>
         <button class="btn" onclick="startGame()">Еще раз</button>
         <button class="btn secondary" onclick="showScreen('menu-screen')">В меню</button>
