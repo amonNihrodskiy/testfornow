@@ -20,70 +20,56 @@ body {
   color: #fff;
 }
 
-#desktop-msg {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px;
-  color: #ffcce6;
-}
-
+/* Обертка для мобилки */
 #game-wrapper {
   position: relative;
   width: 100vw;
   height: 100dvh;
   max-width: 430px;
   overflow: hidden;
-  box-shadow: 0 0 50px rgba(0,0,0,0.5);
-  display: flex;
+  box-shadow: 0 0 50px rgba(0,0,0,0.8);
 }
 
-/* Динамические фоны */
+/* Фоны */
 .bg-default { background: linear-gradient(180deg, #1a0010 0%, #3d0030 60%, #5c0045 100%); }
 .bg-night { background: linear-gradient(180deg, #020111 0%, #191621 100%); }
 .bg-sunset { background: linear-gradient(180deg, #452c63 0%, #f77062 100%); }
 .bg-space { background: #000 url('https://www.transparenttextures.com/patterns/stardust.png'); }
 
-@media (min-width: 650px) {
-  #game-wrapper { display: none !important; }
-  #desktop-msg { display: flex !important; }
-}
-
-canvas { display: block; width: 100%; height: 100%; }
-
-/* HUD */
+/* HUD сверху */
 #hud {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 10px; left: 10px;
   z-index: 10;
   pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 }
-.hud-line { display: flex; align-items: baseline; gap: 8px; }
-#score-val { font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-.hud-small { font-size: 0.75rem; opacity: 0.8; color: #ff9ec8; font-weight: 700; text-transform: uppercase; }
+#score-val { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 2px 10px rgba(255,105,180,0.8); }
+.hud-stats { font-size: 0.75rem; color: #ff9ec8; font-weight: 700; opacity: 0.9; margin-top: -5px; }
 
 #coin-hud {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 10;
-  background: rgba(0,0,0,0.3);
-  padding: 5px 12px;
+  top: 12px; right: 12px;
+  background: rgba(0,0,0,0.4);
+  padding: 5px 15px;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
   font-weight: 900;
   color: #ffd700;
+  display: flex;
+  align-items: center; gap: 5px;
+  z-index: 10;
 }
 
-/* Screens */
+/* Сообщение для ПК */
+#desktop-msg {
+  display: none;
+  position: fixed; inset: 0; background: #1a0010;
+  z-index: 100; flex-direction: column; align-items: center; justify-content: center;
+}
+@media (min-width: 650px) { #desktop-msg { display: flex; } }
+
+canvas { display: block; width: 100%; height: 100%; }
+
+/* Экраны меню */
 .screen {
   position: absolute;
   inset: 0;
@@ -92,74 +78,72 @@ canvas { display: block; width: 100%; height: 100%; }
   align-items: center;
   justify-content: center;
   z-index: 20;
-  background: rgba(20, 0, 10, 0.92);
+  background: rgba(26, 0, 16, 0.95);
   backdrop-filter: blur(10px);
   padding: 20px;
   text-align: center;
 }
 
-h1 { font-size: 2.2rem; color: #ffcce6; text-shadow: 0 0 15px #ff69b4; margin-bottom: 10px; }
-.subtitle { color: #ff9ec8; margin-bottom: 20px; font-size: 0.9rem; }
+h1 { font-size: 2.5rem; color: #ffcce6; text-shadow: 0 0 20px #ff69b4; margin-bottom: 5px; }
+.subtitle { color: #ff9ec8; margin-bottom: 25px; font-size: 1rem; }
 
 .btn {
   background: linear-gradient(135deg, #ff5fa0, #e0105a);
   color: #fff;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   border: none;
   border-radius: 50px;
-  padding: 12px 30px;
-  margin: 5px;
+  padding: 12px 35px;
+  margin: 8px;
   cursor: pointer;
-  width: 200px;
-  transition: 0.2s;
+  width: 230px;
 }
-.btn:active { transform: scale(0.95); }
-.btn.secondary { background: rgba(255,255,255,0.1); border: 1px solid #ff5fa0; color: #ffcce6; }
+.btn.secondary { background: rgba(255,255,255,0.1); border: 2px solid #ff5fa0; color: #ff9ec8; }
 
-/* Grids */
-.scroll-area {
+/* Сетки магазинов */
+.scroll-grid {
   width: 100%;
-  max-height: 60vh;
+  max-height: 55dvh;
   overflow-y: auto;
   margin-bottom: 20px;
-  padding: 10px;
-}
-.grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+  padding: 10px;
 }
-.item-card {
-  background: rgba(255, 255, 255, 0.05);
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
   border: 2px solid transparent;
-  border-radius: 12px;
+  border-radius: 15px;
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: 0.2s;
 }
-.item-card.locked { opacity: 0.5; }
-.item-card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
-.item-icon { font-size: 1.5rem; margin-bottom: 5px; height: 40px; display: flex; align-items: center; }
-.item-title { font-size: 0.65rem; font-weight: bold; margin-bottom: 5px; }
-.item-price { font-size: 0.7rem; color: #ffd700; font-weight: 900; }
+.card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
+.card.locked { opacity: 0.5; }
+.card-icon { font-size: 1.8rem; margin-bottom: 5px; height: 45px; display: flex; align-items: center; }
+.card-title { font-size: 0.7rem; font-weight: bold; color: #ffcce6; }
+.card-price { font-size: 0.75rem; color: #ffd700; font-weight: 900; }
+
+/* Список достижений */
+.ach-list { width: 100%; max-height: 55dvh; overflow-y: auto; text-align: left; }
+.ach-item {
+  background: rgba(255,255,255,0.05);
+  margin-bottom: 8px; border-radius: 10px; padding: 10px;
+  display: flex; align-items: center; gap: 10px;
+  border-left: 4px solid #444;
+}
+.ach-item.unlocked { border-left-color: #ff5fa0; background: rgba(255,95,160,0.1); }
 
 #ach-toast {
   position: absolute;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%) translateY(-20px);
-  background: #e0105a;
-  padding: 10px 20px;
-  border-radius: 15px;
-  z-index: 100;
-  opacity: 0;
-  transition: 0.5s;
-  pointer-events: none;
-  width: 80%;
-  text-align: center;
+  top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px);
+  background: #e0105a; padding: 12px 25px; border-radius: 15px;
+  z-index: 100; opacity: 0; transition: 0.5s; pointer-events: none;
 }
 #ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -168,61 +152,49 @@ h1 { font-size: 2.2rem; color: #ffcce6; text-shadow: 0 0 15px #ff69b4; margin-bo
 
 <div id="desktop-msg">
   <h1>📱💕</h1>
-  <p>Играй на телефоне!</p>
+  <p>Зайди с телефона, чтобы играть!</p>
 </div>
 
 <div id="game-wrapper">
-  <!-- HUD -->
   <div id="hud" style="display:none">
-    <div class="hud-line">
-      <span id="score-val">0</span>
-    </div>
-    <div class="hud-line">
-      <span class="hud-small">Рекорд:</span><span id="best-val" style="font-size:0.8rem">0</span>
-    </div>
-    <div class="hud-line">
-      <span class="hud-small">Всего:</span><span id="total-val" style="font-size:0.8rem">0</span>
-    </div>
+    <div id="score-val">0</div>
+    <div class="hud-stats">Рекорд: <span id="best-val">0</span> | Всего: <span id="sum-val">0</span></div>
   </div>
 
   <div id="coin-hud" style="display:none">
-    <span>💰</span><span id="coin-val">0</span>
+    💰 <span id="coin-val">0</span>
   </div>
 
   <canvas id="gameCanvas"></canvas>
 
-  <!-- Главное меню -->
+  <!-- ЭКРАНЫ -->
   <div class="screen" id="menu-screen">
     <h1>Heart Jump</h1>
-    <div class="subtitle">Лети к звездам, любимая! 💕</div>
+    <div class="subtitle">Лети выше всех, любимая! 💕</div>
     <button class="btn" onclick="startGame()">Новая игра</button>
     <button class="btn secondary" onclick="showScreen('skins-screen')">Персонажи</button>
     <button class="btn secondary" onclick="showScreen('bg-screen')">Фоны</button>
     <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
   </div>
 
-  <!-- Скины -->
   <div class="screen" id="skins-screen" style="display:none">
     <h1>Персонажи</h1>
-    <div class="scroll-area"><div class="grid" id="skins-grid"></div></div>
+    <div class="scroll-grid" id="skins-grid"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Фоны -->
   <div class="screen" id="bg-screen" style="display:none">
-    <h1>Фоны</h1>
-    <div class="scroll-area"><div class="grid" id="bg-grid"></div></div>
+    <h1>Магазин фонов</h1>
+    <div class="scroll-grid" id="bg-grid"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Достижения -->
   <div class="screen" id="ach-screen" style="display:none">
-    <h1>Успехи</h1>
-    <div class="scroll-area"><div id="ach-list" style="text-align:left"></div></div>
+    <h1>Достижения</h1>
+    <div class="ach-list" id="ach-list"></div>
     <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
   </div>
 
-  <!-- Game Over -->
   <div class="screen" id="gameover-screen" style="display:none">
     <h1 id="go-title">Упс!</h1>
     <div class="subtitle" id="go-msg"></div>
@@ -234,9 +206,9 @@ h1 { font-size: 2.2rem; color: #ffcce6; text-shadow: 0 0 15px #ff69b4; margin-bo
 </div>
 
 <script>
-// ===================== РЕСУРСЫ =====================
+// ===================== КОНФИГУРАЦИЯ ИЗОБРАЖЕНИЙ =====================
 const IMAGES = {};
-const LOAD_LIST = {
+const UI_IMAGES = {
   blackhole: 'image/blackhole.png',
   rocket: 'image/rocet.png',
   bigrocket: 'image/bigrocet.png',
@@ -244,19 +216,22 @@ const LOAD_LIST = {
   spring2: 'image/spring2.png',
   bigspring1: 'image/bigspring1.png',
   bigspring2: 'image/bigspring2.png',
-  magnet: 'image/magnet.png',
   vika: 'vika.png'
 };
 
-Object.entries(LOAD_LIST).forEach(([key, src]) => {
-  const img = new Image();
-  img.src = src;
-  IMAGES[key] = img;
-});
+function loadImages() {
+  Object.entries(UI_IMAGES).forEach(([name, src]) => {
+    const img = new Image();
+    img.src = src;
+    IMAGES[name] = img;
+  });
+}
+loadImages();
 
-// ===================== КОНСТАНТЫ =====================
+// ===================== ДАННЫЕ =====================
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
 const PLAT_W = 75, PLAT_H = 15;
 const GRAVITY = 0.38, JUMP_FORCE = -12.5;
 
@@ -280,9 +255,11 @@ const BACKGROUNDS = [
 ];
 
 const ACHIEVEMENTS = [
-  { id: 'b500', icon: '🌙', title: 'Высокий полет', desc: '500 метров за раз', req: 500, type: 'best' },
-  { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100к очков в сумме', req: 100000, type: 'total' },
-  { id: 'c1000', icon: '💰', title: 'Богатая', desc: 'Собрать 1000 монет', req: 1000, type: 'coins' }
+  { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за полет', req: 100, type: 'best' },
+  { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за полет', req: 500, type: 'best' },
+  { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50к очков всего', req: 50000, type: 'total' },
+  { id: 't500k', icon: '👑', title: 'Вселенная', desc: 'Собрать 500к очков', req: 500000, type: 'total' },
+  { id: 'c100', icon: '💰', title: 'Копилка', desc: 'Собрать 100 монет', req: 100, type: 'coins' }
 ];
 
 // ===================== СОСТОЯНИЕ =====================
@@ -291,17 +268,17 @@ let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
 let coins = parseInt(localStorage.getItem('hj_coins') || '0');
 let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
+let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 let currentSkin = localStorage.getItem('hj_skin') || 'red';
 let currentBg = localStorage.getItem('hj_bg') || 'default';
-let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 
 let gameState = 'menu';
 let cameraY = 0, tilt = 0;
 let player, platforms, items, floatingTexts;
-let rocketState = 0; // 0: нет, 1: в большой ракете, 2: ракета отброшена (летит сам)
-let rocketTimer = 0, magnetTimer = 0;
+let rocketActive = false, rocketTimer = 0, rocketType = 0; // 0: в ракете, 1: ракета отброшена
+let magnetTimer = 0;
 
-// ===================== ЯДРО =====================
+// ===================== ИГРОВОЙ ЦИКЛ =====================
 function resize() {
   canvas.width = Math.min(window.innerWidth, 430);
   canvas.height = window.innerHeight;
@@ -315,12 +292,12 @@ window.addEventListener('deviceorientation', e => {
 
 function startGame() {
   score = 0; currentH = 0; bonusS = 0; cameraY = 0;
-  rocketTimer = 0; magnetTimer = 0; rocketState = 0;
+  rocketActive = false; rocketTimer = 0; magnetTimer = 0;
   platforms = []; items = []; floatingTexts = [];
   
   player = { x: canvas.width/2 - 20, y: canvas.height - 150, w: 40, h: 40, vx: 0, vy: JUMP_FORCE };
 
-  platforms.push({ x: canvas.width/2 - PLAT_W/2, y: canvas.height - 100, type: PT.NORMAL, opacity: 1 });
+  platforms.push({ x: canvas.width/2 - PLAT_W/2, y: canvas.height - 100, type: PT.NORMAL, opacity: 1, used: false });
 
   for (let i = 0; i < 15; i++) spawnPlatform(canvas.height - 200 - (i * 85));
 
@@ -336,33 +313,33 @@ function spawnPlatform(y) {
   const x = Math.random() * (canvas.width - PLAT_W - 20) + 10;
   let type = PT.NORMAL;
   if (currentH > 100) {
-    const roll = Math.random();
-    if (roll < 0.2) type = PT.LIFT;
-    else if (roll < 0.3) type = PT.FRAGILE;
-    else if (roll < 0.4) type = PT.LOOSE;
+    const r = Math.random();
+    if (r < 0.15) type = PT.LIFT;
+    else if (r < 0.25) type = PT.FRAGILE;
+    else if (r < 0.35) type = PT.LOOSE;
   }
   if (Math.random() < 0.08) type = PT.STAR;
 
   const p = { x, y, type, used: false, opacity: 1, side: Math.random() < 0.5 ? 1 : -1, speed: 1.5 + Math.random() };
   platforms.push(p);
 
-  // Предметы
-  const itemRoll = Math.random();
-  if (itemRoll < 0.15) {
+  // Спавн предметов
+  if (Math.random() < 0.2) {
     let itype = BT.COIN;
-    if (Math.random() < 0.3) {
+    const itemRoll = Math.random();
+    if (itemRoll < 0.4) {
       const bRoll = Math.random();
-      if (bRoll < 0.4) itype = BT.SPRING;
-      else if (bRoll < 0.7) itype = BT.BIGSPRING;
-      else if (bRoll < 0.85) itype = BT.ROCKET;
+      if (bRoll < 0.3) itype = BT.SPRING;
+      else if (bRoll < 0.6) itype = BT.BIGSPRING;
+      else if (bRoll < 0.8) itype = BT.ROCKET;
       else itype = BT.MAGNET;
     }
-    items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -30, type: itype, active: true, state: 1 });
+    items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -32, type: itype, active: true, state: 1 });
   }
 
-  // Черные дыры (выше 300 очков)
+  // Черные дыры (после 300 метров)
   if (currentH > 300 && Math.random() < 0.04) {
-    items.push({ x: Math.random() * (canvas.width - 60), y: y - 100, type: BT.BLACKHOLE, active: true });
+    items.push({ x: Math.random() * (canvas.width - 60), y: y - 120, type: BT.BLACKHOLE, active: true });
   }
 }
 
@@ -370,14 +347,12 @@ function update() {
   if (gameState !== 'playing') return;
 
   player.vx = tilt * 10;
-  if (rocketState === 1) {
-    player.vy = -15;
+  
+  if (rocketActive) {
+    player.vy = (rocketType === 0) ? -15 : -10;
     rocketTimer--;
-    if (rocketTimer < 60) rocketState = 2; // Переход в свободный полет
-  } else if (rocketState === 2) {
-    player.vy = -10;
-    rocketTimer--;
-    if (rocketTimer <= 0) rocketState = 0;
+    if (rocketTimer === 60) rocketType = 1; // "Отбрасываем" ракету
+    if (rocketTimer <= 0) rocketActive = false;
   } else {
     player.vy += GRAVITY;
   }
@@ -385,98 +360,105 @@ function update() {
   player.x += player.vx;
   player.y += player.vy;
 
+  // Бесконечный экран по бокам
   if (player.x > canvas.width) player.x = -player.w;
   if (player.x < -player.w) player.x = canvas.width;
 
-  if (player.y < cameraY + canvas.height * 0.4) cameraY = player.y - canvas.height * 0.4;
+  // Камера
+  if (player.y < cameraY + canvas.height * 0.4) {
+    cameraY = player.y - canvas.height * 0.4;
+  }
 
+  // Очки
   let h = Math.floor(Math.abs(cameraY) / 15);
   if (h > currentH) currentH = h;
   score = currentH + bonusS;
   updateHUD();
 
+  // Обновление платформ
   platforms.forEach(p => {
     if (p.type === PT.LIFT) {
       p.x += p.side * p.speed;
       if (p.x < 5 || p.x > canvas.width - PLAT_W - 5) p.side *= -1;
     }
-    if (p.used && p.type === PT.FRAGILE) p.opacity -= 0.04;
-    if (p.used && p.type === PT.LOOSE) p.y += 10;
+    if (p.used) {
+      if (p.type === PT.FRAGILE) p.opacity -= 0.05;
+      if (p.type === PT.LOOSE) p.y += 10;
+    }
 
+    // Коллизия (прыжок)
     if (player.vy > 0 && p.opacity > 0.5 &&
         player.x + 10 < p.x + PLAT_W && player.x + player.w - 10 > p.x && 
         player.y + player.h > p.y && player.y + player.h < p.y + PLAT_H + player.vy) {
+      
       player.y = p.y - player.h;
       player.vy = JUMP_FORCE;
-      if (p.type === PT.STAR && !p.used) addBonus(50, p.x + PLAT_W/2, p.y);
+      if (p.type === PT.STAR && !p.used) addBonus(50, p.x + PLAT_W/2, p.y, "+50 💕");
       p.used = true;
     }
   });
 
+  // Обновление предметов
   items.forEach(it => {
     if (!it.active) return;
-    
-    // Позиционирование предметов на платформе
-    if (it.parent) {
+
+    if (it.parent) { // Привязка к платформе
       it.x = it.parent.x + it.offX;
       it.y = it.parent.y + it.offY;
     }
 
-    // Магнит притягивает монетки
+    // Магнит
     if (magnetTimer > 0 && it.type === BT.COIN) {
-      let dx = player.x - it.x, dy = player.y - it.y;
+      let dx = player.x - it.x, dy = (player.y - cameraY) - (it.y - cameraY);
       let dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 200) {
-        it.x += dx * 0.15; it.y += dy * 0.15;
-        if (it.parent) it.parent = null; // Отрываем от платформы
+      if (dist < 250) {
+        it.parent = null;
+        it.x += dx * 0.2; it.y += dy * 0.2;
       }
     }
 
-    // Коллизия
-    let hitW = it.type === BT.BLACKHOLE ? 60 : 30;
+    // Сбор
+    let hitW = (it.type === BT.BLACKHOLE) ? 60 : 35;
     if (player.x < it.x + hitW && player.x + player.w > it.x && 
         player.y < it.y + hitW && player.y + player.h > it.y) {
-      
-      handleItemPickup(it);
+      handlePickup(it);
     }
   });
 
   if (magnetTimer > 0) magnetTimer--;
 
+  // Тексты
   floatingTexts.forEach((t, i) => {
     t.y -= 2; t.life -= 0.02;
     if (t.life <= 0) floatingTexts.splice(i, 1);
   });
 
-  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0.1);
+  // Очистка и спавн
+  platforms = platforms.filter(p => p.y - cameraY < canvas.height + 100 && p.opacity > 0.05);
   items = items.filter(it => it.active && it.y - cameraY < canvas.height + 100);
-  
   if (platforms.length < 18) spawnPlatform(platforms[platforms.length-1].y - 85);
+
+  // Смерть
   if (player.y - cameraY > canvas.height + 100) endGame("Упала в объятия гравитации... 💕");
 }
 
-function handleItemPickup(it) {
+function handlePickup(it) {
+  if (it.type === BT.BLACKHOLE) {
+    endGame("Черная дыра оказалась сильнее... 🌌");
+    return;
+  }
+
   switch(it.type) {
     case BT.COIN:
-      it.active = false; coins++; updateHUD();
-      break;
+      it.active = false; coins++; addBonus(0, it.x, it.y, "+1 💰"); break;
     case BT.SPRING:
+      if (player.vy > 0) { player.vy = -18; it.state = 2; setTimeout(()=>it.active=false, 500); } break;
     case BT.BIGSPRING:
-      if (player.vy > 0) { // Только если падаем на пружину
-        player.vy = it.type === BT.SPRING ? -18 : -25;
-        it.state = 2; // Пружина отжата
-        setTimeout(() => it.active = false, 500);
-      }
-      break;
+      if (player.vy > 0) { player.vy = -26; it.state = 2; setTimeout(()=>it.active=false, 500); } break;
     case BT.ROCKET:
-      it.active = false; rocketState = 1; rocketTimer = 220;
-      break;
+      it.active = false; rocketActive = true; rocketTimer = 240; rocketType = 0; break;
     case BT.MAGNET:
-      it.active = false; magnetTimer = 500;
-      break;
-    case BT.BLACKHOLE:
-      endGame("Черная дыра оказалась сильнее... 🌌");
-      break;
+      it.active = false; magnetTimer = 500; break;
   }
 }
 
@@ -511,52 +493,53 @@ function draw() {
 
     // Предметы
     items.forEach(it => {
-      let y = it.y - cameraY;
-      ctx.globalAlpha = 1;
+      let y = it.y - cameraY; ctx.globalAlpha = 1;
       if (it.type === BT.COIN) {
-        ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(it.x + 15, y + 15, 10, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.font = 'bold 12px Nunito'; ctx.fillText('$', it.x+11, y+19);
+        ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(it.x + 15, y + 15, 12, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.font = '900 14px Nunito'; ctx.fillText('$', it.x+10, y+20);
       } else if (it.type === BT.BLACKHOLE) {
         ctx.drawImage(IMAGES.blackhole, it.x, y, 70, 70);
       } else if (it.type === BT.SPRING) {
-        ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 30, 30);
+        ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 35, 35);
       } else if (it.type === BT.BIGSPRING) {
-        ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 35, 35);
+        ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 40, 40);
       } else if (it.type === BT.ROCKET) {
-        ctx.drawImage(IMAGES.rocket, it.x, y, 30, 30);
+        ctx.drawImage(IMAGES.rocket, it.x, y, 35, 35);
       } else if (it.type === BT.MAGNET) {
-        ctx.drawImage(IMAGES.magnet, it.x, y, 30, 30);
+        ctx.font = '30px serif'; ctx.fillText('🧲', it.x, y + 30);
       }
     });
 
     // ПЕРСОНАЖ
-    ctx.globalAlpha = 1;
+    ctx.globalAlpha = 1.0;
     let px = player.x + player.w/2, py = player.y - cameraY + player.h/2;
 
-    if (rocketState === 1) {
-      // БОЛЬШАЯ РАКЕТА
+    if (rocketActive && rocketType === 0) {
+      // Рисуем большую ракету
       ctx.drawImage(IMAGES.bigrocket, player.x - 44, player.y - cameraY - 70, 128, 185);
-      // ПЕРСОНАЖ В ИЛЛЮМИНАТОРЕ (центр по картинке)
-      drawCharacter(px, py - 18, 0.45); // Уменьшен для иллюминатора
+      // Персонаж в иллюминаторе (уменьшен)
+      drawCharacter(px, py - 18, 0.45);
     } else {
-      drawCharacter(px, py, 1);
+      drawCharacter(px, py, 1.0);
     }
 
+    // Тексты (эффекты)
     floatingTexts.forEach(t => {
-      ctx.globalAlpha = t.life; ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Nunito';
-      ctx.fillText(t.text, t.x - 20, t.y - cameraY);
+      ctx.globalAlpha = t.life; ctx.fillStyle = '#fff'; ctx.font = 'bold 22px Nunito';
+      ctx.fillText(t.text, t.x - 10, t.y - cameraY);
     });
   }
   requestAnimationFrame(draw);
 }
 
 function drawCharacter(x, y, scale) {
-  const skin = SKINS.find(s => s.id === currentSkin);
   ctx.save();
+  ctx.globalAlpha = 1.0; // Гарантируем видимость
   ctx.translate(x, y);
   ctx.scale(scale, scale);
+  const skin = SKINS.find(s => s.id === currentSkin);
   if (skin.type === 'emoji') {
-    ctx.font = '42px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15);
+    ctx.font = '45px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15);
   } else {
     ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip();
     ctx.drawImage(IMAGES.vika, -22, -22, 44, 44);
@@ -568,60 +551,62 @@ function drawCharacter(x, y, scale) {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
   if (id !== 'none') document.getElementById(id).style.display = 'flex';
-  if (id === 'skins-screen') renderSkins();
-  if (id === 'bg-screen') renderBgs();
-  if (id === 'ach-screen') renderAchs();
+  if (id === 'skins-screen') renderList('skins-grid', SKINS, 'hj_skin');
+  if (id === 'bg-screen') renderList('bg-grid', BACKGROUNDS, 'hj_bg');
+  if (id === 'ach-screen') renderAchievements();
 }
 
 function updateHUD() {
   document.getElementById('score-val').textContent = score;
   document.getElementById('best-val').textContent = bestScore;
-  document.getElementById('total-val').textContent = totalScore.toLocaleString();
+  document.getElementById('sum-val').textContent = totalScore.toLocaleString();
   document.getElementById('coin-val').textContent = coins;
 }
 
-function renderSkins() {
-  const container = document.getElementById('skins-grid'); container.innerHTML = '';
-  SKINS.forEach(s => {
-    let locked = (s.reqType === 'best' && bestScore < s.req) || (s.reqType === 'total' && totalScore < s.req);
+function renderList(containerId, list, storageKey) {
+  const container = document.getElementById(containerId); container.innerHTML = '';
+  list.forEach(item => {
+    let locked = false;
+    if (item.reqType === 'best' && bestScore < item.req) locked = true;
+    if (item.reqType === 'total' && totalScore < item.req) locked = true;
+    
+    let owned = (containerId === 'bg-grid') ? ownedBgs.includes(item.id) : !locked;
+    
     const div = document.createElement('div');
-    div.className = `item-card ${locked ? 'locked' : ''} ${currentSkin === s.id ? 'selected' : ''}`;
-    div.innerHTML = `<div class="item-icon">${locked ? '🔒' : (s.type==='emoji'?s.char:'🖼️')}</div>
-                     <div class="item-title">${locked ? '???' : s.title}</div>`;
-    if (!locked) div.onclick = () => { currentSkin = s.id; localStorage.setItem('hj_skin', s.id); renderSkins(); };
-    container.appendChild(div);
-  });
-}
+    div.className = `card ${locked ? 'locked' : ''} ${(item.id === currentSkin || item.id === currentBg) ? 'selected' : ''}`;
+    
+    let icon = locked ? '🔒' : (item.type === 'image' ? '🖼️' : (item.char || '🖼️'));
+    let priceInfo = owned ? 'Получено' : (item.price + ' 💰');
 
-function renderBgs() {
-  const container = document.getElementById('bg-grid'); container.innerHTML = '';
-  BACKGROUNDS.forEach(b => {
-    let owned = ownedBgs.includes(b.id);
-    const div = document.createElement('div');
-    div.className = `item-card ${currentBg === b.id ? 'selected' : ''}`;
-    div.innerHTML = `<div class="item-icon">🖼️</div>
-                     <div class="item-title">${b.title}</div>
-                     <div class="item-price">${owned ? 'Получено' : b.price + ' 💰'}</div>`;
+    div.innerHTML = `<div class="card-icon">${icon}</div>
+                     <div class="card-title">${locked ? '???' : item.title}</div>
+                     <div class="card-price">${priceInfo}</div>`;
+
     div.onclick = () => {
-      if (owned) {
-        currentBg = b.id; localStorage.setItem('hj_bg', b.id);
-      } else if (coins >= b.price) {
-        coins -= b.price; ownedBgs.push(b.id);
-        localStorage.setItem('hj_coins', coins);
-        localStorage.setItem('hj_owned_bgs', JSON.stringify(ownedBgs));
+      if (containerId === 'skins-grid' && !locked) {
+        currentSkin = item.id; localStorage.setItem(storageKey, item.id);
+      } else if (containerId === 'bg-grid') {
+        if (owned) { currentBg = item.id; localStorage.setItem(storageKey, item.id); }
+        else if (coins >= item.price) {
+          coins -= item.price; ownedBgs.push(item.id);
+          localStorage.setItem('hj_coins', coins);
+          localStorage.setItem('hj_owned_bgs', JSON.stringify(ownedBgs));
+        }
       }
-      renderBgs(); updateHUD();
+      renderList(containerId, list, storageKey); updateHUD();
     };
     container.appendChild(div);
   });
 }
 
-function renderAchs() {
+function renderAchievements() {
   const container = document.getElementById('ach-list'); container.innerHTML = '';
   ACHIEVEMENTS.forEach(a => {
     const unlocked = unlockedAchs.includes(a.id);
-    container.innerHTML += `<div style="margin-bottom:10px; opacity:${unlocked?1:0.4}">
-      <b>${a.icon} ${unlocked?a.title:'???'}</b><br><small>${unlocked?a.desc:'Секрет'}</small></div>`;
+    container.innerHTML += `<div class="ach-item ${unlocked?'unlocked':''}">
+      <div style="font-size:1.5rem">${unlocked ? a.icon : '❓'}</div>
+      <div><b>${unlocked ? a.title : '???'}</b><br><small>${unlocked ? a.desc : 'Секретное достижение'}</small></div>
+    </div>`;
   });
 }
 
@@ -635,13 +620,14 @@ function checkAchievements() {
   });
 }
 
-function addBonus(pts, x, y) {
-  bonusS += pts; floatingTexts.push({ x, y, text: `+${pts} 💕`, life: 1 });
+function addBonus(pts, x, y, text) {
+  bonusS += pts; floatingTexts.push({ x, y, text, life: 1 });
+  updateHUD();
 }
 
 function showToast(a) {
-  const t = document.getElementById('ach-toast'); t.innerHTML = `🏆 ${a.title}`; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  const t = document.getElementById('ach-toast'); t.innerHTML = `🏆 <b>${a.title}</b>`; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 setInterval(update, 1000/60);
