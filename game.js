@@ -1,7 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// РЕСУРСЫ
 const IMAGES = {};
 const UI_IMAGES = {
     blackhole: 'image/blackhole.png',
@@ -14,16 +13,12 @@ const UI_IMAGES = {
     vika: 'vika.png'
 };
 
-function loadImages() {
-    Object.entries(UI_IMAGES).forEach(([name, src]) => {
-        const img = new Image();
-        img.src = src;
-        IMAGES[name] = img;
-    });
-}
-loadImages();
+Object.entries(UI_IMAGES).forEach(([name, src]) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => IMAGES[name] = img;
+});
 
-// ПАРАМЕТРЫ
 const PLAT_W = 75, PLAT_H = 15;
 const GRAVITY = 0.38, JUMP_FORCE = -12.5;
 
@@ -40,26 +35,35 @@ const SKINS = [
 ];
 
 const BACKGROUNDS = [
-    { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0 },
-    { id: 'night', title: 'Полночь', class: 'bg-night', price: 50 },
-    { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150 },
-    { id: 'space', title: 'Космос', class: 'bg-space', price: 500 }
+    { id: 'default', title: 'Рассвет', class: 'bg-default', price: 0, platColors: ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'] },
+    { id: 'night', title: 'Полночь', class: 'bg-night', price: 50, platColors: ['#3a47d5', '#00d2ff', '#6a11cb', '#2575fc', '#f9d423'] },
+    { id: 'sunset', title: 'Закат', class: 'bg-sunset', price: 150, platColors: ['#ee0979', '#ff6a00', '#f12711', '#833ab4', '#ffcc33'] },
+    { id: 'space', title: 'Космос', class: 'bg-space', price: 500, platColors: ['#7f00ff', '#e100ff', '#000046', '#1cb5e0', '#00f2fe'] }
 ];
 
 const ACHIEVEMENTS = [
     { id: 'b100', icon: '🌸', title: 'Первые шаги', desc: '100 метров за раз', req: 100, type: 'best' },
+    { id: 'b200', icon: '✨', title: 'Уже высоко!', desc: '200 метров за раз', req: 200, type: 'best' },
     { id: 'b500', icon: '🌙', title: 'Почти космос', desc: '500 метров за раз', req: 500, type: 'best' },
     { id: 'b1000', icon: '🌌', title: 'Легенда', desc: '1000 метров за раз', req: 1000, type: 'best' },
+    { id: 't2000', icon: '🍭', title: 'Начинающая', desc: '2,000 очков в сумме', req: 2000, type: 'total' },
+    { id: 't5000', icon: '🎀', title: 'Милашка', desc: '5,000 очков в сумме', req: 5000, type: 'total' },
     { id: 't10k', icon: '🎈', title: 'Прыгучая', desc: '10,000 очков в сумме', req: 10000, type: 'total' },
+    { id: 't15k', icon: '🧸', title: 'Прелесть', desc: '15,000 очков в сумме', req: 15000, type: 'total' },
+    { id: 't50k', icon: '💎', title: 'Сияющая', desc: '50,000 очков в сумме', req: 50000, type: 'total' },
     { id: 't100k', icon: '🔥', title: 'Огненная', desc: '100,000 очков в сумме', req: 100000, type: 'total' },
+    { id: 't250k', icon: '🌈', title: 'Волшебная', desc: '250,000 очков в сумме', req: 250000, type: 'total' },
     { id: 't500k', icon: '👑', title: 'Моя Вселенная', desc: '500,000 очков в сумме', req: 500000, type: 'total' }
 ];
 
-const COMPLIMENTS = [
-    "Ты умничка! 💕", "Моё солнышко! ☀️", "Ты лучшая! 👑", "Обожаю тебя! ✨"
+// Прогрессивные достижения
+const PROG_ACHS = [
+    { id: 'stat_spring', icon: '🌀', title: 'Попрыгунья', desc: 'Прыгнуть на пружине', key: 's_spring', targets: [1, 5, 10, 20, 50] },
+    { id: 'stat_big', icon: '🚀', title: 'Высокий полет', desc: 'На большой пружине', key: 's_big', targets: [1, 5, 10, 20, 50] },
+    { id: 'stat_hole', icon: '🕳️', title: 'Исследовательница', desc: 'Попасть в черную дыру', key: 's_hole', targets: [1, 5, 10, 20, 50] },
+    { id: 'stat_rocket', icon: '🌌', title: 'Астронавт', desc: 'Полет на ракете', key: 's_rocket', targets: [1, 5, 10, 20, 50] }
 ];
 
-// СОСТОЯНИЕ
 let score = 0, currentH = 0, bonusS = 0;
 let bestScore = parseInt(localStorage.getItem('hj_best') || '0');
 let totalScore = parseInt(localStorage.getItem('hj_total') || '0');
@@ -68,6 +72,9 @@ let unlockedAchs = JSON.parse(localStorage.getItem('hj_achs') || '[]');
 let ownedBgs = JSON.parse(localStorage.getItem('hj_owned_bgs') || '["default"]');
 let currentSkin = localStorage.getItem('hj_skin') || 'red';
 let currentBg = localStorage.getItem('hj_bg') || 'default';
+
+// Статистика для прогресса
+let stats = JSON.parse(localStorage.getItem('hj_stats') || '{"s_spring":0,"s_big":0,"s_hole":0,"s_rocket":0}');
 
 let gameState = 'menu', cameraY = 0, tilt = 0;
 let player, platforms, items, floatingTexts, discardedRockets = [];
@@ -120,13 +127,17 @@ function spawnPlatform(y) {
             const b = Math.random();
             if (b < 0.3) itype = BT.SPRING;
             else if (b < 0.5) itype = BT.BIGSPRING;
-            else if (b < 0.8) itype = BT.ROCKET;
+            else if (b < 0.8 && currentH > 200) itype = BT.ROCKET; // Ракеты только после 200м
             else itype = BT.MAGNET;
         }
         items.push({ parent: p, offX: PLAT_W/2 - 15, offY: -32, type: itype, active: true, state: 1 });
     }
-    if (currentH > 350 && Math.random() < 0.04) {
-        items.push({ x: Math.random() * (canvas.width - 60), y: y - 120, type: BT.BLACKHOLE, active: true });
+    // Черные дыры реже и не кучей
+    if (currentH > 400 && Math.random() < 0.03) {
+        const lastHole = items.find(it => it.type === BT.BLACKHOLE);
+        if (!lastHole || Math.abs(lastHole.y - y) > 400) {
+            items.push({ x: Math.random() * (canvas.width - 60), y: y - 120, type: BT.BLACKHOLE, active: true });
+        }
     }
 }
 
@@ -139,9 +150,8 @@ function update() {
         rocketTimer--;
         if (rocketTimer <= 0) {
             rocketActive = false;
-            // Отбрасываем ракету
             discardedRockets.push({ x: player.x - 44, y: player.y - 70, vx: 5, vy: 2, rot: 0 });
-            player.vy = JUMP_FORCE; // Небольшой прыжок в конце
+            player.vy = JUMP_FORCE; 
         }
     } else {
         player.vy += GRAVITY;
@@ -166,6 +176,8 @@ function update() {
         document.getElementById('magnet-bar').style.width = (magnetTimer / magnetMax * 100) + '%';
         if (magnetTimer <= 0) document.getElementById('magnet-bar-container').style.display = 'none';
     }
+
+    const currentPlatColors = BACKGROUNDS.find(b => b.id === currentBg).platColors;
 
     platforms.forEach(p => {
         if (p.type === PT.LIFT) {
@@ -207,12 +219,30 @@ function update() {
 }
 
 function handlePickup(it) {
-    if (it.type === BT.BLACKHOLE) return endGame("Черная дыра засосала... 🌌");
+    if (it.type === BT.BLACKHOLE) {
+        updateStat('s_hole');
+        return endGame("Черная дыра засосала... 🌌");
+    }
     if (it.type === BT.COIN) { it.active = false; coins++; addBonus(0, it.x, it.y, "+1 💰"); }
-    if (it.type === BT.SPRING && player.vy > 0) { player.vy = -18; it.state = 2; setTimeout(()=>it.active=false, 500); }
-    if (it.type === BT.BIGSPRING && player.vy > 0) { player.vy = -26; it.state = 2; setTimeout(()=>it.active=false, 500); }
-    if (it.type === BT.ROCKET) { it.active = false; rocketActive = true; rocketTimer = 220; }
+    if (it.type === BT.SPRING && player.vy > 0) { 
+        updateStat('s_spring');
+        player.vy = -18; it.state = 2; setTimeout(()=>it.active=false, 500); 
+    }
+    if (it.type === BT.BIGSPRING && player.vy > 0) { 
+        updateStat('s_big');
+        player.vy = -26; it.state = 2; setTimeout(()=>it.active=false, 500); 
+    }
+    if (it.type === BT.ROCKET) { 
+        updateStat('s_rocket');
+        it.active = false; rocketActive = true; rocketTimer = 220; 
+    }
     if (it.type === BT.MAGNET) { it.active = false; magnetTimer = magnetMax; }
+}
+
+function updateStat(key) {
+    stats[key]++;
+    localStorage.setItem('hj_stats', JSON.stringify(stats));
+    checkAchievements();
 }
 
 function endGame(msg) {
@@ -220,7 +250,7 @@ function endGame(msg) {
     localStorage.setItem('hj_total', totalScore); localStorage.setItem('hj_coins', coins);
     if (score > bestScore) { bestScore = score; localStorage.setItem('hj_best', bestScore); }
     checkAchievements();
-    document.getElementById('go-title').textContent = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
+    document.getElementById('go-title').textContent = "Не расстраивайся!";
     document.getElementById('go-msg').innerHTML = `Ты пролетела <b>${score}</b> метров!`;
     document.getElementById('hud').style.display = 'none';
     document.getElementById('magnet-bar-container').style.display = 'none';
@@ -230,25 +260,26 @@ function endGame(msg) {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (gameState === 'playing' || gameState === 'gameover') {
+        const platCols = BACKGROUNDS.find(b => b.id === currentBg).platColors;
         platforms.forEach(p => {
             ctx.save(); ctx.globalAlpha = p.opacity;
-            ctx.fillStyle = ['#ff5fa0', '#f093fb', '#a18cd1', '#4facfe', '#ffd700'][p.type];
+            ctx.fillStyle = platCols[p.type];
             if (p.type === PT.STAR && p.used) ctx.fillStyle = '#555';
             ctx.beginPath(); ctx.roundRect(p.x, p.y - cameraY, PLAT_W, PLAT_H, 8); ctx.fill(); ctx.restore();
         });
         items.forEach(it => {
             let y = it.y - cameraY;
             if (it.type === BT.COIN) { ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(it.x + 15, y + 15, 12, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '900 14px Nunito'; ctx.fillText('$', it.x+10, y+20); }
-            else if (it.type === BT.BLACKHOLE) ctx.drawImage(IMAGES.blackhole, it.x, y, 70, 70);
-            else if (it.type === BT.SPRING) ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 35, 35);
-            else if (it.type === BT.BIGSPRING) ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 42, 42);
-            else if (it.type === BT.ROCKET) ctx.drawImage(IMAGES.rocket, it.x, y, 35, 35);
+            else if (it.type === BT.BLACKHOLE && IMAGES.blackhole) ctx.drawImage(IMAGES.blackhole, it.x, y, 70, 70);
+            else if (it.type === BT.SPRING && IMAGES.spring1) ctx.drawImage(it.state === 1 ? IMAGES.spring1 : IMAGES.spring2, it.x, y, 35, 35);
+            else if (it.type === BT.BIGSPRING && IMAGES.bigspring1) ctx.drawImage(it.state === 1 ? IMAGES.bigspring1 : IMAGES.bigspring2, it.x, y, 42, 42);
+            else if (it.type === BT.ROCKET && IMAGES.rocket) ctx.drawImage(IMAGES.rocket, it.x, y, 35, 35);
             else if (it.type === BT.MAGNET) { ctx.font = '30px serif'; ctx.fillText('🧲', it.x, y + 30); }
         });
-        discardedRockets.forEach(r => { ctx.save(); ctx.translate(r.x + 64, r.y - cameraY + 92); ctx.rotate(r.rot); ctx.drawImage(IMAGES.bigrocket, -64, -92, 128, 185); ctx.restore(); });
+        discardedRockets.forEach(r => { ctx.save(); ctx.translate(r.x + 64, r.y - cameraY + 92); ctx.rotate(r.rot); if (IMAGES.bigrocket) ctx.drawImage(IMAGES.bigrocket, -64, -92, 128, 185); ctx.restore(); });
         ctx.globalAlpha = 1.0;
         let px = player.x + player.w/2, py = player.y - cameraY + player.h/2;
-        if (rocketActive) { ctx.drawImage(IMAGES.bigrocket, player.x - 44, player.y - cameraY - 70, 128, 185); drawCharacter(px, py - 18, 0.45); }
+        if (rocketActive && IMAGES.bigrocket) { ctx.drawImage(IMAGES.bigrocket, player.x - 44, player.y - cameraY - 70, 128, 185); drawCharacter(px, py - 18, 0.45); }
         else drawCharacter(px, py, 1.0);
         floatingTexts.forEach(t => { ctx.globalAlpha = t.life; ctx.fillStyle = '#fff'; ctx.font = 'bold 22px Nunito'; ctx.fillText(t.text, t.x - 10, t.y - cameraY); });
     }
@@ -259,7 +290,7 @@ function drawCharacter(x, y, scale) {
     ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
     const skin = SKINS.find(s => s.id === currentSkin);
     if (skin.type === 'emoji') { ctx.font = '45px serif'; ctx.textAlign = 'center'; ctx.fillText(skin.char, 0, 15); }
-    else { ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip(); ctx.drawImage(IMAGES.vika, -22, -22, 44, 44); }
+    else if (IMAGES.vika) { ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI*2); ctx.clip(); ctx.drawImage(IMAGES.vika, -22, -22, 44, 44); }
     ctx.restore();
 }
 
@@ -301,20 +332,52 @@ function renderList(containerId, list, storageKey) {
 
 function renderAchievements() {
     const container = document.getElementById('ach-list'); container.innerHTML = '';
+    
+    // Сначала обычные
     ACHIEVEMENTS.forEach(a => {
         const unlocked = unlockedAchs.includes(a.id);
         container.innerHTML += `<div class="ach-item ${unlocked?'unlocked':''}"><div>${unlocked?a.icon:'❓'}</div><div><b>${unlocked?a.title:'???'}</b><br><small>${unlocked?a.desc:'Секрет'}</small></div></div>`;
     });
+
+    // Потом прогрессивные
+    PROG_ACHS.forEach(pa => {
+        let currentCount = stats[pa.key];
+        let nextTarget = pa.targets.find(t => t > currentCount) || pa.targets[pa.targets.length-1];
+        let isMax = currentCount >= pa.targets[pa.targets.length-1];
+        
+        container.innerHTML += `<div class="ach-item ${currentCount > 0 ?'unlocked':''}">
+            <div style="font-size:1.5rem">${pa.icon}</div>
+            <div>
+                <b>${pa.title}</b><br>
+                <small>${pa.desc}</small>
+                <div class="ach-progress">${currentCount} / ${nextTarget}</div>
+            </div>
+        </div>`;
+    });
 }
 
 function checkAchievements() {
+    // Проверка обычных
     ACHIEVEMENTS.forEach(a => {
         if (!unlockedAchs.includes(a.id) && ((a.type==='best'&&score>=a.req)||(a.type==='total'&&totalScore>=a.req))) {
             unlockedAchs.push(a.id); localStorage.setItem('hj_achs', JSON.stringify(unlockedAchs));
-            const t = document.getElementById('ach-toast'); t.innerHTML = `🏆 <b>${a.title}</b>`; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3500);
+            showToast(a.title);
         }
     });
+
+    // Проверка прогрессивных для тостов
+    PROG_ACHS.forEach(pa => {
+        if (pa.targets.includes(stats[pa.key])) {
+            showToast(`${pa.title} (${stats[pa.key]})`);
+        }
+    });
+}
+
+function showToast(title) {
+    const t = document.getElementById('ach-toast'); 
+    t.innerHTML = `🏆 <b>${title}</b>`; 
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 function addBonus(pts, x, y, text) { bonusS += pts; floatingTexts.push({ x, y, text, life: 1 }); updateHUD(); }
