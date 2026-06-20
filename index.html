@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Heart Jump 💕</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -10,16 +10,19 @@
 
 <div id="desktop-msg">
     <h1>📱💕</h1>
-    <p>Играй на телефоне, чтобы использовать наклоны!</p>
+    <p>Зайди с телефона, чтобы играть наклонами!</p>
 </div>
 
 <div id="game-wrapper">
     <!-- Декорации фона -->
-    <div class="bg-decor sun-round"></div>
+    <div class="bg-decor sun-glow"></div>
+    <div class="bg-decor cloud-1"></div>
+    <div class="bg-decor cloud-2"></div>
+    <div class="bg-decor birds"></div>
     <div class="bg-decor moon"></div>
-    <div class="bg-decor clouds"></div>
     <div class="bg-decor stars"></div>
 
+    <!-- HUD -->
     <div id="hud" style="display:none">
         <div id="score-val">0</div>
         <div class="hud-stats">Рекорд: <span id="best-val">0</span> | Всего: <span id="sum-val">0</span></div>
@@ -29,13 +32,17 @@
         💰 <span id="coin-val">0</span>
     </div>
 
-    <!-- Полоска магнита (теперь точно видна) -->
-    <div id="magnet-bar-container" style="display:none">
-        <div id="magnet-bar"></div>
+    <!-- Таймер магнита (теперь точно виден) -->
+    <div id="magnet-timer-zone" style="display:none">
+        <div class="magnet-label">Магнит 🧲</div>
+        <div id="magnet-bar-container">
+            <div id="magnet-bar"></div>
+        </div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
+    <!-- ЭКРАНЫ -->
     <div class="screen" id="menu-screen">
         <h1>Heart Jump</h1>
         <div class="subtitle">Для самой лучшей девочки 💕</div>
