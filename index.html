@@ -14,7 +14,10 @@
 </div>
 
 <div id="game-wrapper">
-    <!-- HUD -->
+    <!-- Элементы фона (звезды, луна и т.д. управляются через CSS классы body) -->
+    <div class="bg-decor moon"></div>
+    <div class="bg-decor stars"></div>
+
     <div id="hud" style="display:none">
         <div id="score-val">0</div>
         <div class="hud-stats">Рекорд: <span id="best-val">0</span> | Всего: <span id="sum-val">0</span></div>
@@ -24,14 +27,13 @@
         💰 <span id="coin-val">0</span>
     </div>
 
-    <!-- Полоска магнита -->
     <div id="magnet-bar-container" style="display:none">
         <div id="magnet-bar"></div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
-    <!-- ЭКРАНЫ -->
+    <!-- ГЛАВНОЕ МЕНЮ -->
     <div class="screen" id="menu-screen">
         <h1>Heart Jump</h1>
         <div class="subtitle">Для самой лучшей девочки 💕</div>
@@ -41,25 +43,29 @@
         <button class="btn secondary" onclick="showScreen('ach-screen')">Достижения</button>
     </div>
 
+    <!-- СКИНЫ -->
     <div class="screen" id="skins-screen" style="display:none">
         <h1>Персонажи</h1>
         <div class="scroll-grid" id="skins-grid"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
-    <div class="screen" id="bg-screen">
+    <!-- МАГАЗИН ФОНОВ (добавил style="display:none", чтобы не вылезал) -->
+    <div class="screen" id="bg-screen" style="display:none">
         <div class="shop-header">Баланс: <span id="shop-coin-val">0</span> 💰</div>
-        <h1>Фоны</h1>
+        <h1>Магазин фонов</h1>
         <div class="scroll-grid" id="bg-grid"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
+    <!-- ДОСТИЖЕНИЯ -->
     <div class="screen" id="ach-screen" style="display:none">
         <h1>Достижения</h1>
         <div class="ach-list" id="ach-list"></div>
         <button class="btn secondary" onclick="showScreen('menu-screen')">Назад</button>
     </div>
 
+    <!-- GAME OVER -->
     <div class="screen" id="gameover-screen" style="display:none">
         <h1 id="go-title">Упс!</h1>
         <div class="subtitle" id="go-msg"></div>
