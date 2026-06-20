@@ -2,14 +2,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+body, html { width: 100%; height: 100%; overflow: hidden; background: #000; }
+
 body {
     font-family: 'Nunito', sans-serif;
-    background: #1a0010;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
     color: #fff;
     transition: background 0.8s ease;
 }
@@ -19,86 +18,89 @@ body {
     width: 100vw;
     height: 100dvh;
     max-width: 430px;
+    background: #1a0010;
     overflow: hidden;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
     display: flex;
 }
 
-/* КРАСИВЫЕ ФОНЫ */
-.bg-default { background: linear-gradient(180deg, #1a0010 0%, #4a0035 50%, #7d004d 100%); }
-.bg-night { background: linear-gradient(180deg, #05051a 0%, #000c29 50%, #001a4d 100%); }
-.bg-sunset { background: linear-gradient(180deg, #2a0845 0%, #6441a5 40%, #ff5e62 100%); }
+/* ФОНЫ */
+.bg-default { background: linear-gradient(180deg, #1a0010 0%, #610443 60%, #ff83d6 100%); }
+.bg-night { background: linear-gradient(180deg, #020111 10%, #001a4d 100%); }
+.bg-sunset { background: linear-gradient(180deg, #2a0845 0%, #ff5e62 100%); }
 .bg-space { background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); }
 
+/* Декорации */
 .bg-decor { position: absolute; pointer-events: none; z-index: 1; opacity: 0; transition: 0.8s; }
-.bg-night .moon { opacity: 0.9; display: block; width: 50px; height: 50px; background: #fefcd7; border-radius: 50%; top: 40px; right: 40px; box-shadow: 0 0 30px #fefcd7; }
-.bg-space .stars, .bg-night .stars { opacity: 1; display: block; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
+
+/* Рассвет - Облака */
+.bg-default .clouds {
+    opacity: 0.3; display: block; inset: 0;
+    background: url('https://www.transparenttextures.com/patterns/cloudy-day.png');
+}
+
+/* Ночь - Луна и звезды */
+.bg-night .moon { opacity: 0.9; display: block; width: 50px; height: 50px; background: #fff; border-radius: 50%; top: 40px; right: 40px; box-shadow: 0 0 40px #fff; }
+.bg-night .stars, .bg-space .stars { opacity: 1; display: block; inset: 0; background: url('https://www.transparenttextures.com/patterns/stardust.png'); }
+
+/* Закат - Солнце */
+.bg-sunset .sun-round {
+    opacity: 0.8; display: block; width: 120px; height: 120px;
+    background: linear-gradient(#ffcc33, #ff6a00);
+    border-radius: 50%; bottom: 15%; left: 50%; transform: translateX(-50%);
+    box-shadow: 0 0 60px #ff6a00;
+}
+.bg-sunset .clouds { opacity: 0.4; display: block; inset: 0; background: url('https://www.transparenttextures.com/patterns/cloudy-day.png'); filter: invert(1); }
 
 /* HUD */
-#hud { position: absolute; top: 10px; left: 10px; z-index: 10; }
-#score-val { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
-.hud-stats { font-size: 0.75rem; color: #ff9ec8; font-weight: 700; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+#hud { position: absolute; top: 15px; left: 15px; z-index: 10; }
+#score-val { font-size: 2.5rem; font-weight: 900; line-height: 1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.hud-stats { font-size: 0.8rem; color: #ffcce6; font-weight: 700; margin-top: 5px; }
 
 #coin-hud {
-    position: absolute; top: 12px; right: 12px;
-    background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 20px;
+    position: absolute; top: 15px; right: 15px;
+    background: rgba(0,0,0,0.5); padding: 6px 18px; border-radius: 25px;
     font-weight: 900; color: #ffd700; z-index: 10;
-    box-shadow: 0 2px 10px rgba(255,215,0,0.2);
 }
 
 #magnet-bar-container {
-    position: absolute; bottom: 25px; left: 50%;
-    transform: translateX(-50%); width: 140px; height: 10px;
-    background: rgba(255,255,255,0.15); border-radius: 10px; z-index: 15; border: 1px solid rgba(255,255,255,0.3);
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%); width: 160px; height: 12px;
+    background: rgba(0,0,0,0.4); border-radius: 20px; z-index: 50; border: 2px solid rgba(255,255,255,0.2);
 }
-#magnet-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #ff5fa0, #e0105a); border-radius: 10px; transition: width 0.1s linear; }
+#magnet-bar { width: 100%; height: 100%; background: linear-gradient(90deg, #00f2fe, #4facfe); border-radius: 10px; }
 
-/* ЭКРАНЫ */
+/* Экраны */
 .screen {
     position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; z-index: 20;
-    background: rgba(15, 0, 10, 0.96); backdrop-filter: blur(15px); padding: 20px;
+    align-items: center; justify-content: center; z-index: 100;
+    background: rgba(10, 0, 5, 0.96); backdrop-filter: blur(15px); padding: 20px;
 }
+
+#gameCanvas { width: 100%; height: 100%; display: block; z-index: 5; }
 
 .btn {
     background: linear-gradient(135deg, #ff5fa0, #e0105a);
     color: #fff; border: none; border-radius: 50px;
-    padding: 12px 35px; margin: 8px; cursor: pointer; width: 230px; font-weight: 700;
-    box-shadow: 0 4px 15px rgba(224, 16, 90, 0.3);
+    padding: 14px 40px; margin: 10px; cursor: pointer; width: 240px; font-weight: 700; font-size: 1.1rem;
 }
-.btn.secondary { background: rgba(255,255,255,0.05); border: 2px solid #ff5fa0; color: #ffcce6; }
+.btn.secondary { background: rgba(255,255,255,0.1); border: 2px solid #ff5fa0; color: #ffcce6; }
 
-.scroll-grid {
-    width: 100%; max-height: 50dvh; overflow-y: auto;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px;
-}
-
-.card {
-    background: rgba(255, 255, 255, 0.05); border-radius: 15px; border: 2px solid transparent;
-    padding: 10px; display: flex; flex-direction: column; align-items: center; transition: 0.2s;
-}
-.card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.15); }
+.scroll-grid { width: 100%; max-height: 50dvh; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 10px; }
+.card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 12px; display: flex; flex-direction: column; align-items: center; border: 2px solid transparent; }
+.card.selected { border-color: #ff5fa0; background: rgba(255, 95, 160, 0.2); }
 .card.locked { opacity: 0.4; filter: grayscale(1); }
-.card-icon { font-size: 1.8rem; height: 45px; display: flex; align-items: center; }
-.card-title { font-size: 0.7rem; font-weight: bold; color: #ffcce6; text-align: center; }
-.card-price { font-size: 0.7rem; color: #ffd700; font-weight: 900; }
 
 .ach-list { width: 100%; max-height: 50dvh; overflow-y: auto; }
-.ach-item {
-    background: rgba(255,255,255,0.05); margin-bottom: 10px;
-    border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 15px;
-    transition: 0.3s;
-}
+.ach-item { background: rgba(255,255,255,0.05); margin-bottom: 10px; border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 15px; }
 .ach-item.unlocked { border-left: 5px solid #ff5fa0; background: rgba(255,95,160,0.1); }
-.ach-progress { font-size: 0.75rem; color: #ffd700; font-weight: 900; margin-top: 3px; }
+.ach-progress { font-size: 0.8rem; color: #ffd700; font-weight: 900; }
 
 #ach-toast {
-    position: absolute; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px);
-    background: linear-gradient(135deg, #ff5fa0, #e0105a); padding: 12px 25px; border-radius: 20px;
-    z-index: 100; opacity: 0; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3); font-weight: 900;
+    position: absolute; top: 80px; left: 50%; transform: translateX(-50%) translateY(-30px);
+    background: linear-gradient(135deg, #ff5fa0, #e0105a); padding: 15px 30px; border-radius: 30px;
+    z-index: 200; opacity: 0; transition: 0.5s; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
 }
 #ach-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-#desktop-msg { display: none; position: fixed; inset: 0; background: #1a0010; z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
-@media (min-width: 650px) { #desktop-msg { display: flex; } #game-wrapper { display: none !important; } }
+#desktop-msg { display: none; position: fixed; inset: 0; background: #1a0010; z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+@media (min-width: 650px) { #desktop-msg { display: flex; } }
